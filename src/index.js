@@ -9,5 +9,5 @@ app.use(express.json())
 app.use(indexRouter)
 app.use(usersRoutes)
 
-app.listen(5432)
+app.listen(3000)
 console.log('Server running on port 3000')

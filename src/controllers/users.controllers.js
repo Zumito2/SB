@@ -80,7 +80,7 @@ export const updateUser = async (req, res) => {
   }
 };
 
-
+// Login
 export const login = async (req, res) => {
   try {
     const { name, pass } = req.body;
@@ -97,11 +97,11 @@ export const login = async (req, res) => {
       return res.status(401).json({ message: "Contraseña incorrecta" });
     }
 
-    const { id, name: username, rol } = user; // Desestructuración del usuario
+    const { id, name: username, rol } = user;
 
     res.json({ id, name: username, rol });
   } catch (error) {
-    console.error("Error durante login:", error);  // Imprime el error con un mensaje claro
-    return res.status(500).json({ message: "Algo salió mal", error: error.message });  // Incluye el mensaje de error
+    console.error("Error durante login:", error); 
+    return res.status(500).json({ message: "Algo salió mal", error: error.message });  
   }
 };
