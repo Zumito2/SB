@@ -13,6 +13,7 @@ import path from 'path';
 // Importa las rutas definidas para manejar usuarios y la página de inicio de la API.
 import usersRoutes from './routes/users.routes.js';
 import indexRouter from './routes/index.routes.js';
+import jobsRoutes from './routes/jobs.routes.js';
 
 // Usa rutas absolutas con `path.resolve()` para definir la ubicación de los archivos de clave y certificado.
 // `keyPath` y `certPath` contienen las rutas absolutas de los archivos del servidor (key y cert) necesarios para HTTPS.
@@ -44,7 +45,8 @@ app.use(express.json());
 
 // Usa las rutas definidas para manejar las solicitudes de los usuarios y la página de inicio.
 app.use(indexRouter);   // Ruta para la página de inicio de la API.
-app.use(usersRoutes);   // Ruta para las operaciones de usuarios (crear, leer, actualizar, eliminar usuarios).
+app.use(usersRoutes);   // Ruta para las operaciones de usuarios
+app.use(jobsRoutes);    // Ruta para las operaciones de trabajos
 
 // Crea y lanza el servidor HTTPS utilizando las opciones de clave y certificado.
 // El servidor escucha en el puerto 4433 y, cuando se inicia, muestra un mensaje en la consola.

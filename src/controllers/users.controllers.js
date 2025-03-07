@@ -140,7 +140,7 @@ export const login = async (req, res) => {
     // Si las credenciales son correctas, responde con los datos del usuario (id, nombre y rol).
     const { id, name: username, rol } = user;
 
-    res.json({ id, name: username, rol });
+    res.json({ user });
   } catch (error) {
     // Si ocurre un error durante el login, se responde con un error 500 (Internal Server Error).
     console.error("Error durante login:", error); 
