@@ -3,7 +3,7 @@ import { Router } from 'express';
 
 // Importa los controladores de usuarios desde el archivo `users.controllers.js`.
 // Estos controladores son funciones que se encargan de manejar las solicitudes HTTP para los usuarios.
-import { getJobs, getJobsId } from '../controllers/jobs.controller.js';
+import { getJobs, getJobsId, getJobsDate, getJob, startJob, endJob} from '../controllers/jobs.controller.js';
 
 // Crea una instancia de `Router` para definir las rutas de la API.
 const router = Router();
@@ -14,7 +14,13 @@ router.get('/jobs', getJobs);
 
 router.get('/jobs/:id', getJobsId);
 
+router.get('/jobs/:id/:fecha', getJobsDate);
 
+router.get('/job/:id', getJob);
+
+router.put('/jobs/jobStart/:idJob', startJob);
+
+router.put('/jobs/jobEnd/:idJob', endJob);
 
 // Exporta el objeto `router` para que pueda ser utilizado en otros archivos de la aplicación.
 export default router;

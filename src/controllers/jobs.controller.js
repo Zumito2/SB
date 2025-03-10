@@ -28,10 +28,7 @@ export const getJobsId = async (req, res) => {
         }
 
         const [rows] = await pool.query(
-            `SELECT j.idJob, j.dateJob, j.name, j.description, j.address, j.state, j.tlf
-             FROM jobs j 
-             JOIN users_jobs uj ON j.idJob = uj.idJob 
-             WHERE uj.idUser = ?;`,
+            `SELECT * FROM jobs WHERE idJob = ?;`,
             [userId]
         );
 
@@ -40,4 +37,114 @@ export const getJobsId = async (req, res) => {
         console.error("Error al ejecutar la consulta:", error);
         res.status(500).json({ message: "Something goes wrong" });
     }
+};
+
+export const getJobsDate = async (req, res) => {
+  try {
+      const userId = parseInt(req.params.id, 10);
+      const fecha = req.params.fecha; // O usa req.query.fecha si viene en query
+
+      if (isNaN(userId) || !fecha) {
+          return res.status(400).json({ message: "Invalid user ID or date" });
+      }
+
+      const [rows] = await pool.query(
+          `SELECT j.idJob, j.dateJob, j.name, j.description, j.address, j.state, j.tlf
+           FROM jobs j 
+           JOIN users_jobs uj ON j.idJob = uj.idJob 
+           WHERE uj.idUser = ? AND DATE(j.dateJob) = ?;`,
+          [userId, fecha]
+      );
+
+      res.json(rows);
+  } catch (error) {
+      console.error("Error al ejecutar la consulta:", error);
+      res.status(500).json({ message: "Something goes wrong" });
+  }
+};
+
+// **Buscar trabajo por ID**
+// Este controlador maneja la solicitud para obtener un trabajo por su ID.
+export const getJob = async (req, res) => {
+  try {
+    // Realiza una consulta SQL para obtener un trabajo por su ID. `req.params.id` obtiene el ID desde los parámetros de la URL.
+    const [rows] = await pool.query('SELECT * FROM jobs WHERE idJob = ?', [req.params.id]);
+
+    // Si no se encuentra ningún trabajo con el ID especificado, se responde con un error 404 (Not Found).
+    if (rows.length <= 0) {
+      return res.status(404).json({ message: "Trabajo no encontrado" });
+    }
+
+    // Si el trabajo existe, se responde con el trabajo encontrado en formato JSON.
+    res.json(rows);
+  } catch (error) {
+    // En caso de un error, se responde con un error 500 (Internal Server Error).
+    return res.status(500).json({ message: "Something goes wrong" });
+  }
+};
+
+export const startJob = async (req, res) => {
+  try {
+    // Obtener el idJob desde los parámetros de la URL
+    const { idJob } = req.params; // Esto obtiene el idJob de la URL
+    
+    // Obtener el startTime desde el cuerpo de la solicitud
+    const { dateJob } = req.body; // Esto obtiene startTime (dateJob) del cuerpo
+    
+    // Verificar si ambos parámetros están presentes
+    if (!idJob || !dateJob) {
+      return res.status(400).json({ message: "Faltan parámetros: idJob o startTime" });
+    }
+
+    // Realizar la consulta SQL para actualizar el trabajo con el idJob dado
+    const [result] = await pool.query(
+      'UPDATE users_jobs SET fecha_inicio = ? WHERE idJob = ?',
+      [dateJob, idJob]
+    );
+
+    // Si no se encuentra el trabajo, retornar error 404
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Trabajo no encontrado" });
+    }
+
+    // Si la actualización fue exitosa, retornar mensaje de éxito
+    res.status(200).json({ message: "Hora de inicio actualizada exitosamente" });
+
+  } catch (error) {
+    console.error("Error al actualizar la hora de inicio del trabajo:", error);
+    res.status(500).json({ message: "Something goes wrong" });
+  }
+};
+
+export const endJob = async (req, res) => {
+  try {
+    // Obtener el idJob desde los parámetros de la URL
+    const { idJob } = req.params; // Esto obtiene el idJob de la URL
+    
+    // Obtener el endTime desde el cuerpo de la solicitud
+    const { dateJob } = req.body; // Esto obtiene endTime (dateJob) del cuerpo
+    
+    // Verificar si ambos parámetros están presentes
+    if (!idJob || !dateJob) {
+      return res.status(400).json({ message: "Faltan parámetros: idJob o endTime" });
+    }
+
+    // Realizar la consulta SQL para actualizar el trabajo con el idJob dado
+    const [result] = await pool.query(
+      'UPDATE users_jobs SET fecha_fin = ? WHERE idJob = ?',
+      [dateJob, idJob]
+    );
+
+    // Si no se encuentra el trabajo, retornar error 404
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Trabajo no encontrado" });
+    }
+
+    // Si la actualización fue exitosa, retornar mensaje de éxito
+    res.status(200).json({ message: "Hora de fin actualizada exitosamente" });
+
+  } catch (error) {
+    console.error("Error al actualizar la hora de fin del trabajo:", error);
+    res.status(500).json({ message: "Something goes wrong" });
+  }
 };
