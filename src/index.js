@@ -17,8 +17,12 @@ import jobsRoutes from './routes/jobs.routes.js';
 
 // Usa rutas absolutas con `path.resolve()` para definir la ubicación de los archivos de clave y certificado.
 // `keyPath` y `certPath` contienen las rutas absolutas de los archivos del servidor (key y cert) necesarios para HTTPS.
-const keyPath = path.resolve("C:/Users/Zumito/Desktop/SmartByteProject/keys/server.key");
-const certPath = path.resolve("C:/Users/Zumito/Desktop/SmartByteProject/keys/server.cert");
+
+//const keyPath = path.resolve("C:/Users/Zumito/Desktop/SmartByteProject/keys/server.key");
+//const certPath = path.resolve("C:/Users/Zumito/Desktop/SmartByteProject/keys/server.cert");
+
+const keyPath = path.resolve("C:/Users/betsa/Escritorio/Practicas/SmartByteProject/keys/server.key");
+const certPath = path.resolve("C:/Users/betsa/Escritorio/Practicas/SmartByteProject/keys/server.cert");
 
 // Muestra las rutas absolutas de los archivos de clave y certificado en la consola.
 console.log("Ruta al archivo server.key:", keyPath);
