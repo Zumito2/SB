@@ -39,6 +39,31 @@ export const getJobsId = async (req, res) => {
     }
 };
 
+export const getJobsFecha = async (req, res) => {
+  try {
+    const fecha = req.params.fecha;
+
+    if (!fecha || isNaN(Date.parse(fecha))) {
+      return res.status(400).json({ message: "Invalid date" });
+    }
+
+    console.log("Fecha recibida:", fecha); // Depuración
+
+    const [rows] = await pool.query(
+      `SELECT * FROM jobs WHERE DATE(dateJob) = ?;`,
+      [fecha]
+    );
+
+    console.log("Resultados:", rows); // Depuración
+
+    res.json(rows);
+  } catch (error) {
+    console.error("Error al ejecutar la consulta:", error);
+    res.status(500).json({ message: "Something goes wrong" });
+  }
+};
+
+
 export const getJobsDate = async (req, res) => {
   try {
       const userId = parseInt(req.params.id, 10);
@@ -99,7 +124,7 @@ export const startJob = async (req, res) => {
     // Realizar la consulta SQL para actualizar el trabajo con el idJob dado
     const [result] = await pool.query(
       'UPDATE users_jobs SET fecha_inicio = ? WHERE idJob = ?',
-      [dateJob, idJob]
+      [dateJob, idJob]    
     );
 
     // Si no se encuentra el trabajo, retornar error 404
