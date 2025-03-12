@@ -225,14 +225,22 @@ export const updateJob = async (req, res) => {
 // **Eliminar un trabajo existente**
 export const deleteJob = async (req, res) => {
   try {
-    const { id } = req.params;
-    const [result] = await pool.query('DELETE FROM jobs WHERE idJob = ?', [id]);
-    if (result.affectedRows === 0) {
-      return res.status(404).json({ message: "Trabajo no encontrado" });
-    }
-    res.sendStatus(204);
+      const { id } = req.params;
+      console.log("Intentando eliminar el trabajo con ID:", id);
+
+      // Eliminar registros dependientes en users_jobs
+      await pool.query('DELETE FROM users_jobs WHERE idJob = ?', [id]);
+
+      // Eliminar el trabajo de la tabla jobs
+      const [result] = await pool.query('DELETE FROM jobs WHERE idJob = ?', [id]);
+
+      console.log("Resultado de la consulta:", result);
+      if (result.affectedRows === 0) {
+          return res.status(404).json({ message: "Trabajo no encontrado" });
+      }
+      res.sendStatus(204);
   } catch (error) {
-    console.error("Error al eliminar el trabajo:", error);
-    res.status(500).json({ message: "Something goes wrong" });
+      console.error("Error al eliminar el trabajo:", error);
+      res.status(500).json({ message: "Something goes wrong" });
   }
 };
