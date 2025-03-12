@@ -198,15 +198,24 @@ export const updateJob = async (req, res) => {
   try {
     const { id } = req.params;
     const { dateJob, name, description, address, state, tlf } = req.body;
+
+    console.log("Fecha recibida en updateJob:", dateJob);
+
     const [result] = await pool.query(
       'UPDATE jobs SET dateJob = ?, name = ?, description = ?, address = ?, state = ?, tlf = ? WHERE idJob = ?',
       [dateJob, name, description, address, state, tlf, id]
     );
+
     if (result.affectedRows === 0) {
       return res.status(404).json({ message: "Trabajo no encontrado" });
     }
+
     const [rows] = await pool.query('SELECT * FROM jobs WHERE idJob = ?', [id]);
+
+    console.log("Fecha después de la consulta SELECT:", rows[0].dateJob);
+
     res.json(rows[0]);
+
   } catch (error) {
     console.error("Error al actualizar el trabajo:", error);
     res.status(500).json({ message: "Something goes wrong" });
