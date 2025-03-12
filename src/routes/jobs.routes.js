@@ -24,11 +24,11 @@ router.put('/jobs/jobStart/:idJob', startJob);
 
 router.put('/jobs/jobEnd/:idJob', endJob);
 
-router.post('/jobs/createJob/:idJob', createJob)
+router.post('/jobs/createJob/:idJob', createJob);
 
-router.put('/jobs/updateJob/:idJob', updateJob)
+router.put('/jobs/updateJob/:idJob', updateJob);
 
-router.delete('/job/deleteJob/:idJob', deleteJob)
+router.delete('/job/deleteJob/:idJob', deleteJob);
 
 // Exporta el objeto `router` para que pueda ser utilizado en otros archivos de la aplicación.
 export default router;
