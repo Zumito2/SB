@@ -179,7 +179,7 @@ export const endJob = async (req, res) => {
 //CRUD
 
 // **Crear un nuevo trabajo**
-/*export const createJob = async (req, res) => {
+export const createJob = async (req, res) => {
   try {
     const { dateJob, name, description, address, state, tlf } = req.body;
     const [rows] = await pool.query(
@@ -226,4 +226,4 @@ export const deleteJob = async (req, res) => {
     console.error("Error al eliminar el trabajo:", error);
     res.status(500).json({ message: "Something goes wrong" });
   }
-};*/
+};
