@@ -32,5 +32,6 @@ router.delete('/users/:id', deleteUser);
 // La ruta `/login` recibe las credenciales del usuario y ejecuta el controlador `login`.
 router.post('/login', login);
 
+
 // Exporta el objeto `router` para que pueda ser utilizado en otros archivos de la aplicación.
 export default router;
