@@ -1,9 +1,11 @@
 // Importa el paquete `express` para crear y manejar el servidor web.
 import express from 'express';
-
 import * as url from 'url';
 import dotenv from 'dotenv';
 import path from 'path';
+
+// Crea una instancia de la aplicación Express.
+const app = express();
 
 const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
 dotenv.config({ path: path.join(__dirname, 'dotenv.env') });
@@ -22,8 +24,7 @@ import loginRoutes from './routes/login.routes.js';
 // Importa el middleware para autenticación del token JWT
 import { authenticateToken } from './authMiddleware.js'; // Asegúrate de tener la ruta correcta
 
-// Crea una instancia de la aplicación Express.
-const app = express();
+
 
 // Configura Express para manejar solicitudes con datos JSON.
 app.use(express.json());
