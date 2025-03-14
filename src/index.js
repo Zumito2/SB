@@ -51,13 +51,14 @@ app.use((req, res, next) => {
     next();
 });
 
+app.use(loginRoutes);
 
 app.use(authenticateToken, usersRoutes);
 
 // Rutas de trabajos protegidas con JWT
 app.use(authenticateToken, jobsRoutes);  // Protege las rutas de trabajos con el middleware de autenticación
 
-app.use(loginRoutes);
+
 
 // Crea y lanza el servidor HTTPS utilizando las opciones de clave y certificado.
 https.createServer(options, app).listen(4433, () => {
