@@ -4,25 +4,26 @@ import { Router } from 'express';
 // Importa los controladores de usuarios desde el archivo `users.controllers.js`.
 // Estos controladores son funciones que se encargan de manejar las solicitudes HTTP para los usuarios.
 import { getJobs, getJobsId, getJobsDate, getJob, startJob, endJob, getJobsFecha} from '../controllers/jobs.controller.js';
+import { authenticateToken } from '../authMiddleware.js'; // Importa el middleware
 
 // Crea una instancia de `Router` para definir las rutas de la API.
 const router = Router();
 
 // Define una ruta GET para obtener la lista de todos los usuarios.
 // Cuando se accede a `/users`, se ejecuta el controlador `getUsers`.
-router.get('/jobs', getJobs);
+router.get('/jobs', authenticateToken, getJobs);
 
-router.get('/jobs/:id', getJobsId);
+router.get('/jobs/:id', authenticateToken, getJobsId);
 
-router.get('/jobs/fecha/:fecha', getJobsFecha);
+router.get('/jobs/fecha/:fecha', authenticateToken, getJobsFecha);
 
-router.get('/jobs/:id/:fecha', getJobsDate);
+router.get('/jobs/:id/:fecha', authenticateToken, getJobsDate);
 
-router.get('/job/:id', getJob);
+router.get('/job/:id', authenticateToken, getJob);
 
-router.put('/jobs/jobStart/:idJob', startJob);
+router.put('/jobs/jobStart/:idJob', authenticateToken, startJob);
 
-router.put('/jobs/jobEnd/:idJob', endJob);
+router.put('/jobs/jobEnd/:idJob', authenticateToken, endJob);
 
 // Exporta el objeto `router` para que pueda ser utilizado en otros archivos de la aplicación.
 export default router;

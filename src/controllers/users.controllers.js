@@ -1,6 +1,9 @@
 // Importa el objeto `pool` desde el archivo de configuración de base de datos (`db.js`).
 // `pool` gestiona las conexiones a la base de datos.
 import { pool } from '../db.js';
+import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
+dotenv.config();
 
 // **Obtener lista total de usuarios**
 // Este controlador maneja la solicitud para obtener todos los usuarios de la base de datos.
@@ -114,36 +117,5 @@ export const updateUser = async (req, res) => {
   }
 };
 
-// **Login de usuario**
-// Este controlador maneja la solicitud de inicio de sesión.
-export const login = async (req, res) => {
-  try {
-    // Extrae el nombre de usuario y la contraseña desde el cuerpo de la solicitud.
-    const { name, pass } = req.body;
 
-    // Realiza una consulta SQL para obtener el usuario con el nombre proporcionado.
-    const [rows] = await pool.query("SELECT * FROM users WHERE name = ?", [name]);
 
-    // Si no se encuentra el usuario con ese nombre, responde con un error 404 (Not Found).
-    if (rows.length === 0) {
-      return res.status(404).json({ message: "Usuario no encontrado" });
-    }
-
-    // Si el usuario es encontrado, compara la contraseña proporcionada con la almacenada.
-    const user = rows[0];
-
-    // Si las contraseñas no coinciden, responde con un error 401 (Unauthorized).
-    if (pass != user.pass) {
-      return res.status(401).json({ message: "Contraseña incorrecta" });
-    }
-
-    // Si las credenciales son correctas, responde con los datos del usuario (id, nombre y rol).
-    const { id, name: username, rol } = user;
-
-    res.json({ user });
-  } catch (error) {
-    // Si ocurre un error durante el login, se responde con un error 500 (Internal Server Error).
-    console.error("Error durante login:", error); 
-    return res.status(500).json({ message: "Algo salió mal", error: error.message });  
-  }
-};
