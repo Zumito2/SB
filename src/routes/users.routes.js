@@ -31,5 +31,6 @@ router.put('/users/:id', authenticateToken, updateUser);
 router.delete('/users/:id', authenticateToken, deleteUser);
 
 
+
 // Exporta el objeto `router` para que pueda ser utilizado en otros archivos de la aplicación.
 export default router;

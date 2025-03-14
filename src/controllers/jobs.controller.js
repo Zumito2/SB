@@ -173,3 +173,74 @@ export const endJob = async (req, res) => {
     res.status(500).json({ message: "Something goes wrong" });
   }
 };
+
+
+
+//CRUD
+
+// **Crear un nuevo trabajo**
+export const createJob = async (req, res) => {
+  try {
+    const { dateJob, name, description, address, state, tlf } = req.body;
+    const [rows] = await pool.query(
+      'INSERT INTO jobs (dateJob, name, description, address, state, tlf) VALUES (?, ?, ?, ?, ?, ?)',
+      [dateJob, name, description, address, state, tlf]
+    );
+    res.status(201).json({ id: rows.insertId, dateJob, name, description, address, state, tlf });
+  } catch (error) {
+    console.error("Error al crear el trabajo:", error);
+    res.status(500).json({ message: "Something goes wrong" });
+  }
+};
+
+// **Actualizar un trabajo existente**
+export const updateJob = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { dateJob, name, description, address, state, tlf } = req.body;
+
+    console.log("Fecha recibida en updateJob:", dateJob);
+
+    const [result] = await pool.query(
+      'UPDATE jobs SET dateJob = ?, name = ?, description = ?, address = ?, state = ?, tlf = ? WHERE idJob = ?',
+      [dateJob, name, description, address, state, tlf, id]
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Trabajo no encontrado" });
+    }
+
+    const [rows] = await pool.query('SELECT * FROM jobs WHERE idJob = ?', [id]);
+
+    console.log("Fecha después de la consulta SELECT:", rows[0].dateJob);
+
+    res.json(rows[0]);
+
+  } catch (error) {
+    console.error("Error al actualizar el trabajo:", error);
+    res.status(500).json({ message: "Something goes wrong" });
+  }
+};
+
+// **Eliminar un trabajo existente**
+export const deleteJob = async (req, res) => {
+  try {
+      const { id } = req.params;
+      console.log("Intentando eliminar el trabajo con ID:", id);
+
+      // Eliminar registros dependientes en users_jobs
+      await pool.query('DELETE FROM users_jobs WHERE idJob = ?', [id]);
+
+      // Eliminar el trabajo de la tabla jobs
+      const [result] = await pool.query('DELETE FROM jobs WHERE idJob = ?', [id]);
+
+      console.log("Resultado de la consulta:", result);
+      if (result.affectedRows === 0) {
+          return res.status(404).json({ message: "Trabajo no encontrado" });
+      }
+      res.sendStatus(204);
+  } catch (error) {
+      console.error("Error al eliminar el trabajo:", error);
+      res.status(500).json({ message: "Something goes wrong" });
+  }
+};
