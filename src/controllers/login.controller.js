@@ -61,7 +61,7 @@ export const login = async (req, res) => {
     
     const [rows] = await pool.query(
       "INSERT INTO registros VALUES (?, 'Inicio sesion', NOW())", 
-      [userId]
+      [payload.idUser]
     );
     console.log("Registro login", rows);
   };
