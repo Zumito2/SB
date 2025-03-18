@@ -31,5 +31,7 @@ router.put('/jobs/:id', authenticateToken, updateJob);
 
 router.delete('/jobs/:id', authenticateToken, deleteJob);
 
+router.get('/jobs/user/:id', authenticateToken, getJobsByUser);
+
 // Exporta el objeto `router` para que pueda ser utilizado en otros archivos de la aplicación.
 export default router;
