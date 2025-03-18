@@ -93,7 +93,8 @@ export const getJobsDate = async (req, res) => {
 export const getJob = async (req, res) => {
   try {
     // Realiza una consulta SQL para obtener un trabajo por su ID. `req.params.id` obtiene el ID desde los parámetros de la URL.
-    const [rows] = await pool.query('SELECT * FROM jobs WHERE idJob = ?', [req.params.id]);
+    const [rows] = await pool.query('SELECT jobs.*, users_jobs.fecha_inicio, users_jobs.fecha_fin FROM jobs LEFT JOIN users_jobs ON jobs.idJob = users_jobs.idJob WHERE jobs.idJob = ?;', [req.params.id]);
+    //const [rows] = await pool.query('SELECT * FROM jobs WHERE idJob = ?', [req.params.id]);
 
     // Si no se encuentra ningún trabajo con el ID especificado, se responde con un error 404 (Not Found).
     if (rows.length <= 0) {
