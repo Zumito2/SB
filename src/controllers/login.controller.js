@@ -57,4 +57,11 @@ export const login = async (req, res) => {
       console.error("Error durante login:", error);
       return res.status(500).json({ message: "Algo salió mal", error: error.message });
     }
+
+    
+    const [rows] = await pool.query(
+      "INSERT INTO registros VALUES (?, 'Inicio sesion', NOW())", 
+      [payload.idUser]
+    );
+    console.log("Registro login", rows);
   };

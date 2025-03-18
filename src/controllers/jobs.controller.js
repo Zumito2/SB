@@ -93,7 +93,8 @@ export const getJobsDate = async (req, res) => {
 export const getJob = async (req, res) => {
   try {
     // Realiza una consulta SQL para obtener un trabajo por su ID. `req.params.id` obtiene el ID desde los parámetros de la URL.
-    const [rows] = await pool.query('SELECT * FROM jobs WHERE idJob = ?', [req.params.id]);
+    const [rows] = await pool.query('SELECT jobs.*, users_jobs.fecha_inicio, users_jobs.fecha_fin FROM jobs LEFT JOIN users_jobs ON jobs.idJob = users_jobs.idJob WHERE jobs.idJob = ?;', [req.params.id]);
+    //const [rows] = await pool.query('SELECT * FROM jobs WHERE idJob = ?', [req.params.id]);
 
     // Si no se encuentra ningún trabajo con el ID especificado, se responde con un error 404 (Not Found).
     if (rows.length <= 0) {
@@ -225,6 +226,11 @@ export const endJob = async (req, res) => {
     console.error("Error al actualizar la hora de fin del trabajo:", error);
     res.status(500).json({ message: "Something goes wrong" });
   }
+
+  const [rows] = await pool.query(
+    "INSERT INTO registros VALUES (?, ?, NOW())", 
+    [userId, `Trabajo terminado ${idJob}`]
+);
 };
 
 
@@ -244,6 +250,11 @@ export const createJob = async (req, res) => {
     console.error("Error al crear el trabajo:", error);
     res.status(500).json({ message: "Something goes wrong" });
   }
+
+  const [rows] = await pool.query(
+    "INSERT INTO registros VALUES (?, ?, NOW())", 
+    [userId, `Trabajo insertado ${name}`]
+);
 };
 
 // **Actualizar un trabajo existente**
@@ -273,6 +284,12 @@ export const updateJob = async (req, res) => {
     console.error("Error al actualizar el trabajo:", error);
     res.status(500).json({ message: "Something goes wrong" });
   }
+
+  const [rows] = await pool.query(
+    "INSERT INTO registros VALUES (?, ?, NOW())", 
+    [userId, `Trabajo modificado ${id}`]
+);
+
 };
 
 // **Eliminar un trabajo existente**
@@ -296,4 +313,9 @@ export const deleteJob = async (req, res) => {
       console.error("Error al eliminar el trabajo:", error);
       res.status(500).json({ message: "Something goes wrong" });
   }
+
+  const [rows] = await pool.query(
+    "INSERT INTO registros VALUES (?, ?, NOW())", 
+    [userId, `Trabajo eliminado ${id}`]
+);
 };

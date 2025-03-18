@@ -9,7 +9,6 @@ const app = express();
 
 const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
 dotenv.config({ path: path.join(__dirname, 'dotenv.env') });
-console.log("JWT_SECRET en index.js:", process.env.JWT_SECRET);
 
 const PORT = process.env.PORT || 3000; // Railway asignará un puerto dinámico
 app.listen(PORT, () => {
