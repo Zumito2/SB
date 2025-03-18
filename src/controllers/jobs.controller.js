@@ -172,6 +172,11 @@ export const endJob = async (req, res) => {
     console.error("Error al actualizar la hora de fin del trabajo:", error);
     res.status(500).json({ message: "Something goes wrong" });
   }
+
+  const [rows] = await pool.query(
+    "INSERT INTO registros VALUES (?, ?, NOW())", 
+    [userId, `Trabajo terminado ${idJob}`]
+);
 };
 
 
@@ -191,6 +196,11 @@ export const createJob = async (req, res) => {
     console.error("Error al crear el trabajo:", error);
     res.status(500).json({ message: "Something goes wrong" });
   }
+
+  const [rows] = await pool.query(
+    "INSERT INTO registros VALUES (?, ?, NOW())", 
+    [userId, `Trabajo insertado ${name}`]
+);
 };
 
 // **Actualizar un trabajo existente**
@@ -220,6 +230,12 @@ export const updateJob = async (req, res) => {
     console.error("Error al actualizar el trabajo:", error);
     res.status(500).json({ message: "Something goes wrong" });
   }
+
+  const [rows] = await pool.query(
+    "INSERT INTO registros VALUES (?, ?, NOW())", 
+    [userId, `Trabajo modificado ${id}`]
+);
+
 };
 
 // **Eliminar un trabajo existente**
@@ -243,4 +259,9 @@ export const deleteJob = async (req, res) => {
       console.error("Error al eliminar el trabajo:", error);
       res.status(500).json({ message: "Something goes wrong" });
   }
+
+  const [rows] = await pool.query(
+    "INSERT INTO registros VALUES (?, ?, NOW())", 
+    [userId, `Trabajo eliminado ${id}`]
+);
 };

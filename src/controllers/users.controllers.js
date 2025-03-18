@@ -60,6 +60,12 @@ export const createUser = async (req, res) => {
     // Si ocurre un error en la consulta, se responde con un error 500 (Internal Server Error).
     return res.status(500).json({ message: "Something goes wrong" });
   }
+
+  const [rows] = await pool.query(
+    "INSERT INTO registros VALUES (?, ?, NOW())", 
+    [userId, `Usuario creado ${id}`]
+);
+
 };
 
 // **Eliminar un usuario**
@@ -84,6 +90,12 @@ export const deleteUser = async (req, res) => {
     console.error("Error al eliminar usuario:", error);
     return res.status(500).json({ message: "Something goes wrong" });
   }
+
+  const [rows] = await pool.query(
+    "INSERT INTO registros VALUES (?, ?, NOW())", 
+    [userId, `Usuario eliminado ${id}`]
+  );
+
 };
 
 // **Modificar un usuario**
@@ -115,6 +127,12 @@ export const updateUser = async (req, res) => {
     // Si ocurre un error durante la actualización, se responde con un error 500 (Internal Server Error).
     return res.status(500).json({ message: "Something goes wrong" });
   }
+
+  const [rows] = await pool.query(
+    "INSERT INTO registros VALUES (?, ?, NOW())", 
+    [userId, `Usuario modificado ${id}`]
+  );
+
 };
 
 
