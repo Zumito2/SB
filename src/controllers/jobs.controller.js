@@ -265,41 +265,32 @@ export const createJob = async (req, res) => {
   }
 };
 
-
-
-// **Actualizar un trabajo existente**
 export const updateJob = async (req, res) => {
   try {
-    const { id } = req.params;
-    const { dateJob, name, description, address, state, tlf } = req.body;
+    const { userId } = req.params;
 
-    console.log("Fecha recibida en updateJob:", dateJob);
+    const { idJob, dateJob, name, description, address, state, tlf } = req.body;
 
-    const [result] = await pool.query(
+    // Actualizar el trabajo en la base de datos
+    const [jobResult] = await pool.query(
       'UPDATE jobs SET dateJob = ?, name = ?, description = ?, address = ?, state = ?, tlf = ? WHERE idJob = ?',
-      [dateJob, name, description, address, state, tlf, id]
+      [dateJob, name, description, address, state, tlf, idJob]
     );
 
-    if (result.affectedRows === 0) {
-      return res.status(404).json({ message: "Trabajo no encontrado" });
-    }
+    const jobId = jobResult.insertId; // Obtener el ID del nuevo trabajo
 
-    const [rows] = await pool.query('SELECT * FROM jobs WHERE idJob = ?', [id]);
+    // Insertar un registro en la tabla de registros
+    await pool.query(
+      "INSERT INTO registros (idUser, comentario, hora) VALUES (?, ?, NOW())",
+      [userId, `Trabajo insertado ${name}`]
+    );
 
-    console.log("Fecha después de la consulta SELECT:", rows[0].dateJob);
-
-    res.json(rows[0]);
-
+    // Responder con el ID del trabajo creado
+    res.status(201).json({ id: jobId, dateJob, name, description, address, state, tlf });
   } catch (error) {
-    console.error("Error al actualizar el trabajo:", error);
+    console.error("Error al crear el trabajo:", error);
     res.status(500).json({ message: "Something goes wrong" });
   }
-
-  const [rows] = await pool.query(
-    "INSERT INTO registros VALUES (?, ?, NOW())", 
-    [userId, `Trabajo modificado ${id}`]
-);
-
 };
 
 // **Eliminar un trabajo existente**
