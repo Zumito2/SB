@@ -187,22 +187,30 @@ export const endJob = async (req, res) => {
 // **Crear un nuevo trabajo**
 export const createJob = async (req, res) => {
   try {
-    const { dateJob, name, description, address, state, tlf } = req.body;
-    const [rows] = await pool.query(
-      'INSERT INTO jobs (dateJob, name, description, address, state, tlf) VALUES (?, ?, ?, ?, ?, ?)',
+    const { dateJob, name, description, address, state, tlf, userId } = req.body;
+
+    // Insertar el trabajo en la base de datos
+    const [jobResult] = await pool.query(
+      "INSERT INTO jobs (dateJob, name, description, address, state, tlf) VALUES (?, ?, ?, ?, ?, ?)",
       [dateJob, name, description, address, state, tlf]
     );
-    res.status(201).json({ id: rows.insertId, dateJob, name, description, address, state, tlf });
+
+    const jobId = jobResult.insertId; // Obtener el ID del nuevo trabajo
+
+    // Insertar un registro en la tabla de registros
+    await pool.query(
+      "INSERT INTO registros (userId, description, created_at) VALUES (?, ?, NOW())",
+      [userId, `Trabajo insertado ${name}`]
+    );
+
+    // Responder solo con el ID del trabajo creado
+    res.status(201).json({ id: jobId });
   } catch (error) {
     console.error("Error al crear el trabajo:", error);
     res.status(500).json({ message: "Something goes wrong" });
   }
-
-  const [rows] = await pool.query(
-    "INSERT INTO registros VALUES (?, ?, NOW())", 
-    [userId, `Trabajo insertado ${name}`]
-);
 };
+
 
 // **Actualizar un trabajo existente**
 export const updateJob = async (req, res) => {
