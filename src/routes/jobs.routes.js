@@ -29,7 +29,7 @@ router.post('/jobs/:userId', authenticateToken, createJob);
 
 router.put('/jobs/:userId', authenticateToken, updateJob);
 
-router.put('/jobs/:id', authenticateToken, updateJob);
+router.put('/jobs/:idUser', authenticateToken, updateJob);
 
 router.delete('/jobs/:id', authenticateToken, deleteJob);
 
