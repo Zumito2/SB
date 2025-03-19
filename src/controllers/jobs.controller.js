@@ -253,7 +253,7 @@ export const createJob = async (req, res) => {
 
     // Insertar un registro en la tabla de registros
     await pool.query(
-      "INSERT INTO registros (idUser, description, created_at) VALUES (?, ?, NOW())",
+      "INSERT INTO registros (idUser, comentario, hora) VALUES (?, ?, NOW())",
       [userId, `Trabajo insertado ${name}`]
     );
 
