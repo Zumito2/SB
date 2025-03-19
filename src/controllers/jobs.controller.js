@@ -239,7 +239,9 @@ export const endJob = async (req, res) => {
 
 export const createJob = async (req, res) => {
   try {
-    const { dateJob, name, description, address, state, tlf, userId } = req.body;
+    const { userId } = req.params;
+
+    const { dateJob, name, description, address, state, tlf } = req.body;
 
     // Insertar el trabajo en la base de datos
     const [jobResult] = await pool.query(
