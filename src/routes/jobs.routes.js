@@ -25,7 +25,7 @@ router.put('/jobs/jobStart/:idJob', authenticateToken, startJob);
 
 router.put('/jobs/jobEnd/:idJob', authenticateToken, endJob);
 
-router.post('/jobs/:id', authenticateToken, createJob);
+router.post('/jobs/:userId', authenticateToken, createJob);
 
 router.put('/jobs/:id', authenticateToken, updateJob);
 
