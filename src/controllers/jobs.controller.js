@@ -267,8 +267,7 @@ export const createJob = async (req, res) => {
 
 export const updateJob = async (req, res) => {
   try {
-    const idUser = Number(req.params.userId);
-    console.log(userId)
+    const idUser = req.params.idUser;
 
     const { idJob, dateJob, name, description, address, state, tlf } = req.body;
 
