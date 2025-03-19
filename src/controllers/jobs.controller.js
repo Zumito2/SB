@@ -237,7 +237,6 @@ export const endJob = async (req, res) => {
 
 //CRUD
 
-// **Crear un nuevo trabajo**
 export const createJob = async (req, res) => {
   try {
     const { dateJob, name, description, address, state, tlf, userId } = req.body;
@@ -256,13 +255,14 @@ export const createJob = async (req, res) => {
       [userId, `Trabajo insertado ${name}`]
     );
 
-    // Responder solo con el ID del trabajo creado
-    res.status(201).json({ id: jobId });
+    // Responder con el ID del trabajo creado
+    res.status(201).json({ id: jobId, dateJob, name, description, address, state, tlf });
   } catch (error) {
-      console.error("Error al crear el trabajo:", error);
-      res.status(500).json({ message: "Something goes wrong" });
+    console.error("Error al crear el trabajo:", error);
+    res.status(500).json({ message: "Something goes wrong" });
   }
 };
+
 
 
 // **Actualizar un trabajo existente**
