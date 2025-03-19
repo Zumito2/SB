@@ -268,6 +268,7 @@ export const createJob = async (req, res) => {
 export const updateJob = async (req, res) => {
   try {
     const { userId } = req.params;
+    console.log(userId)
 
     const { idJob, dateJob, name, description, address, state, tlf } = req.body;
 
@@ -279,6 +280,7 @@ export const updateJob = async (req, res) => {
 
     const jobId = jobResult.insertId; // Obtener el ID del nuevo trabajo
 
+    console.log(userId)
     // Insertar un registro en la tabla de registros
     await pool.query(
       "INSERT INTO registros (idUser, comentario, hora) VALUES (?, ?, NOW())",
