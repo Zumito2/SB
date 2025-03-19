@@ -109,6 +109,59 @@ export const getJob = async (req, res) => {
   }
 };
 
+/*export const getJobsByUser = async (req, res) => {
+  try {
+      const userId = parseInt(req.params.id, 10);
+      if (isNaN(userId)) {
+          return res.status(400).json({ message: "Invalid user ID" });
+      }
+
+      const [rows] = await pool.query(
+          `SELECT * FROM jobs WHERE tecnicoId = ?;`, // Corregir consulta
+          [userId]
+      );
+
+      res.json(rows);
+  } catch (error) {
+      console.error("Error al ejecutar la consulta:", error);
+      res.status(500).json({ message: "Something goes wrong" });
+  }
+};*/
+
+export const getJobsByUser = async (req, res) => {
+  try {
+      const userId = parseInt(req.params.id, 10);
+      if (isNaN(userId)) {
+          return res.status(400).json({ message: "Invalid user ID" });
+      }
+
+      // Obtener los idJob asignados al usuario
+      const [userJobs] = await pool.query(
+          `SELECT idJob FROM users_jobs WHERE idUser = ?;`,
+          [userId]
+      );
+
+      // Si el usuario no tiene trabajos asignados, retornar una lista vacía
+      if (userJobs.length === 0) {
+          return res.json([]);
+      }
+
+      // Obtener los detalles de los trabajos
+      const jobIds = userJobs.map(job => job.idJob);
+      const [jobs] = await pool.query(
+          `SELECT * FROM jobs WHERE idJob IN (?);`,
+          [jobIds]
+      );
+
+      res.json(jobs);
+  } catch (error) {
+      console.error("Error al ejecutar la consulta:", error);
+      res.status(500).json({ message: "Something goes wrong" });
+  }
+};
+
+
+
 export const startJob = async (req, res) => {
   try {
     // Obtener el idJob desde los parámetros de la URL
@@ -206,8 +259,8 @@ export const createJob = async (req, res) => {
     // Responder solo con el ID del trabajo creado
     res.status(201).json({ id: jobId });
   } catch (error) {
-    console.error("Error al crear el trabajo:", error);
-    res.status(500).json({ message: "Something goes wrong" });
+      console.error("Error al crear el trabajo:", error);
+      res.status(500).json({ message: "Something goes wrong" });
   }
 };
 

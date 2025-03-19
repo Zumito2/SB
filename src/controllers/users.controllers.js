@@ -65,7 +65,6 @@ export const createUser = async (req, res) => {
     "INSERT INTO registros VALUES (?, ?, NOW())", 
     [userId, `Usuario creado ${id}`]
 );
-
 };
 
 // **Eliminar un usuario**
@@ -106,13 +105,13 @@ export const updateUser = async (req, res) => {
     const { id } = req.params;
 
     // Extrae los nuevos valores del usuario (name, pass, rol) desde el cuerpo de la solicitud.
-    const { name, pass, rol } = req.body;
+    const { name, pass, rol, tlf, email } = req.body;
 
     // Realiza una consulta SQL para actualizar los datos del usuario.
     // La función `IFNULL(?, value)` asegura que solo los campos no nulos sean actualizados.
     const [result] = await pool.query(
-      "UPDATE users SET name = IFNULL(?, name), pass = IFNULL(?, pass), rol = IFNULL(?, rol) WHERE idUser = ?",
-      [name, pass, rol, id]
+      "UPDATE users SET name = IFNULL(?, name), pass = IFNULL(?, pass), rol = IFNULL(?, rol),  tlf = IFNULL(?, tlf),  email = IFNULL(?, email) WHERE idUser = ?",
+      [name, pass, rol, tlf, email, id]
     );
 
     // Si no se actualizó ningún registro (afectó 0 filas), responde con un error 404 (Not Found).
