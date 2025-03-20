@@ -207,8 +207,8 @@ export const endJob = async (req, res) => {
     const { idJob } = req.params; // Obtener idJob de la URL
     const { dateJob, userId } = req.body; // Obtener fecha de fin y userId
 
-    if (!idJob || !dateJob || !userId) {
-      return res.status(400).json({ message: "Faltan parámetros: idJob, endTime o userId" });
+    if (!idJob || !dateJob) {
+      return res.status(400).json({ message: "Faltan parámetros: idJob, endTime" });
     }
 
     // 1️⃣ Actualizar fecha de fin en users_jobs
