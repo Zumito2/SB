@@ -276,8 +276,7 @@ export const createJob = async (req, res) => {
 
 export const updateJob = async (req, res) => {
   try {
-    const { userId } = req.params;
-
+    const { userId } = req.params;  // userId de los parámetros de la URL
     const { idJob, dateJob, name, description, address, state, tlf } = req.body;
 
     // Actualizar el trabajo en la base de datos
@@ -286,20 +285,25 @@ export const updateJob = async (req, res) => {
       [dateJob, name, description, address, state, tlf, idJob]
     );
 
-    console.log(userId)
+    // Si no se actualizó ninguna fila, se puede retornar un error indicando que no se encontró el trabajo.
+    if (jobResult.affectedRows === 0) {
+      return res.status(404).json({ message: "Trabajo no encontrado" });
+    }
+
     // Insertar un registro en la tabla de registros
     await pool.query(
       "INSERT INTO registros (idUser, comentario, hora) VALUES (?, ?, NOW())",
       [userId, `Trabajo modificado ${name}`]
     );
 
-      // Responder con el ID del trabajo modificado
-      res.status(201).json({ idJob: jobId });
+    // Responder con el ID del trabajo actualizado (idJob)
+    res.status(200).json({ idJob });
   } catch (error) {
-      console.error("Error al modificar el trabajo:", error);
-      res.status(500).json({ message: "Something goes wrong" });
+    console.error("Error al modificar el trabajo:", error);
+    res.status(500).json({ message: "Something goes wrong" });
   }
 };
+
 
 // **Eliminar un trabajo existente**
 export const deleteJob = async (req, res) => {
