@@ -279,6 +279,11 @@ export const updateJob = async (req, res) => {
     const { userId } = req.params;  // userId de los parámetros de la URL
     const { idJob, dateJob, name, description, address, state, tlf } = req.body;
 
+    await pool.query(
+      "INSERT INTO registros (idUser, comentario, hora) VALUES (?, ?, NOW())",
+      [userId, `Trabajo modificado ${name}`]
+    );
+
     // Actualizar el trabajo en la base de datos
     const [jobResult] = await pool.query(
       'UPDATE jobs SET dateJob = ?, name = ?, description = ?, address = ?, state = ?, tlf = ? WHERE idJob = ?',
@@ -408,9 +413,9 @@ export const updateUserJob = async (req, res) => {
       return res.status(404).json({ message: "El trabajo no tiene un usuario asignado" });
     }
 
-    // 3️⃣ Actualizar el idUser para el trabajo idJob
+    // 3️⃣ Insertar en users_jobs
     await pool.query(
-      'UPDATE users_jobs SET idUser = ? WHERE idJob = ?',
+      'INSERT INTO users_jobs (idUser, idJob) VALUES (?, ?)',
       [idUser, idJob]
     );
 
