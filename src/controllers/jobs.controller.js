@@ -232,12 +232,6 @@ export const endJob = async (req, res) => {
       return res.status(404).json({ message: "No se pudo actualizar el estado del trabajo" });
     }
 
-    // 3️⃣ Insertar en la tabla registros
-    await pool.query(
-      "INSERT INTO registros (userId, descripcion, fecha) VALUES (?, ?, NOW())", 
-      [userId, `Trabajo terminado ${idJob}`]
-    );
-
     // 4️⃣ Enviar respuesta después de que todo se complete
     res.status(200).json({ message: "Hora de fin y estado actualizados correctamente" });
 
