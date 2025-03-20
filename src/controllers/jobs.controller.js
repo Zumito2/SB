@@ -279,11 +279,6 @@ export const updateJob = async (req, res) => {
     const { userId } = req.params;  // userId de los parámetros de la URL
     const { idJob, dateJob, name, description, address, state, tlf } = req.body;
 
-    await pool.query(
-      "INSERT INTO registros (idUser, comentario, hora) VALUES (?, ?, NOW())",
-      [userId, `Trabajo modificado ${name}`]
-    );
-
     // Actualizar el trabajo en la base de datos
     const [jobResult] = await pool.query(
       'UPDATE jobs SET dateJob = ?, name = ?, description = ?, address = ?, state = ?, tlf = ? WHERE idJob = ?',
