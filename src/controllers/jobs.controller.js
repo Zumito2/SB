@@ -189,6 +189,14 @@ export const startJob = async (req, res) => {
     // Si la actualización fue exitosa, retornar mensaje de éxito
     res.status(200).json({ message: "Hora de inicio actualizada exitosamente" });
 
+    const newStatus = "En proceso";
+    await pool.query(
+      'UPDATE jobs SET state = ? WHERE idJob = ?',
+      [newStatus, idJob]
+    );
+
+    res.status(200).json({ message: "Estado actualizado correctamente" });
+
   } catch (error) {
     console.error("Error al actualizar la hora de inicio del trabajo:", error);
     res.status(500).json({ message: "Something goes wrong" });
