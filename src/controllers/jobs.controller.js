@@ -267,7 +267,7 @@ export const createJob = async (req, res) => {
     );
 
     // Responder con el ID del trabajo creado
-    res.status(201).json({ id: jobId, dateJob, name, description, address, state, tlf });
+    res.status(201).json({ idJob: jobId, dateJob, name, description, address, state, tlf });
   } catch (error) {
     console.error("Error al crear el trabajo:", error);
     res.status(500).json({ message: "Something goes wrong" });
