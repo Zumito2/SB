@@ -204,41 +204,49 @@ export const startJob = async (req, res) => {
 
 export const endJob = async (req, res) => {
   try {
-    // Obtener el idJob desde los parámetros de la URL
-    const { idJob } = req.params; // Esto obtiene el idJob de la URL
-    
-    // Obtener el endTime desde el cuerpo de la solicitud
-    const { dateJob } = req.body; // Esto obtiene endTime (dateJob) del cuerpo
-    
-    // Verificar si ambos parámetros están presentes
-    if (!idJob || !dateJob) {
-      return res.status(400).json({ message: "Faltan parámetros: idJob o endTime" });
+    const { idJob } = req.params; // Obtener idJob de la URL
+    const { dateJob, userId } = req.body; // Obtener fecha de fin y userId
+
+    if (!idJob || !dateJob || !userId) {
+      return res.status(400).json({ message: "Faltan parámetros: idJob, endTime o userId" });
     }
 
-    // Realizar la consulta SQL para actualizar el trabajo con el idJob dado
+    // 1️⃣ Actualizar fecha de fin en users_jobs
     const [result] = await pool.query(
       'UPDATE users_jobs SET fecha_fin = ? WHERE idJob = ?',
       [dateJob, idJob]
     );
 
-    // Si no se encuentra el trabajo, retornar error 404
     if (result.affectedRows === 0) {
       return res.status(404).json({ message: "Trabajo no encontrado" });
     }
 
-    // Si la actualización fue exitosa, retornar mensaje de éxito
-    res.status(200).json({ message: "Hora de fin actualizada exitosamente" });
+    // 2️⃣ Actualizar estado en jobs
+    const newStatus = "Terminado";
+    const [statusUpdate] = await pool.query(
+      'UPDATE jobs SET state = ? WHERE idJob = ?',
+      [newStatus, idJob]
+    );
+
+    if (statusUpdate.affectedRows === 0) {
+      return res.status(404).json({ message: "No se pudo actualizar el estado del trabajo" });
+    }
+
+    // 3️⃣ Insertar en la tabla registros
+    await pool.query(
+      "INSERT INTO registros (userId, descripcion, fecha) VALUES (?, ?, NOW())", 
+      [userId, `Trabajo terminado ${idJob}`]
+    );
+
+    // 4️⃣ Enviar respuesta después de que todo se complete
+    res.status(200).json({ message: "Hora de fin y estado actualizados correctamente" });
 
   } catch (error) {
-    console.error("Error al actualizar la hora de fin del trabajo:", error);
+    console.error("Error al finalizar el trabajo:", error);
     res.status(500).json({ message: "Something goes wrong" });
   }
-
-  const [rows] = await pool.query(
-    "INSERT INTO registros VALUES (?, ?, NOW())", 
-    [userId, `Trabajo terminado ${idJob}`]
-);
 };
+
 
 
 
