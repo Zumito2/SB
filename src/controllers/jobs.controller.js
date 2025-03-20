@@ -164,44 +164,43 @@ export const getJobsByUser = async (req, res) => {
 
 export const startJob = async (req, res) => {
   try {
-    // Obtener el idJob desde los parámetros de la URL
-    const { idJob } = req.params; // Esto obtiene el idJob de la URL
-    
-    // Obtener el startTime desde el cuerpo de la solicitud
-    const { dateJob } = req.body; // Esto obtiene startTime (dateJob) del cuerpo
-    
-    // Verificar si ambos parámetros están presentes
+    const { idJob } = req.params; // Obtener idJob de la URL
+    const { dateJob } = req.body; // Obtener fecha de inicio del cuerpo
+
     if (!idJob || !dateJob) {
-      return res.status(400).json({ message: "Faltan parámetros: idJob o startTime" });
+      return res.status(400).json({ message: "Faltan parámetros: idJob o dateJob" });
     }
 
-    // Realizar la consulta SQL para actualizar el trabajo con el idJob dado
+    // 1️⃣ Primera consulta: Actualizar fecha de inicio en users_jobs
     const [result] = await pool.query(
       'UPDATE users_jobs SET fecha_inicio = ? WHERE idJob = ?',
-      [dateJob, idJob]    
+      [dateJob, idJob]
     );
 
-    // Si no se encuentra el trabajo, retornar error 404
     if (result.affectedRows === 0) {
       return res.status(404).json({ message: "Trabajo no encontrado" });
     }
 
-    // Si la actualización fue exitosa, retornar mensaje de éxito
-    res.status(200).json({ message: "Hora de inicio actualizada exitosamente" });
-
+    // 2️⃣ Segunda consulta: Actualizar estado en la tabla jobs
     const newStatus = "En proceso";
-    await pool.query(
+    const [statusUpdate] = await pool.query(
       'UPDATE jobs SET state = ? WHERE idJob = ?',
       [newStatus, idJob]
     );
 
-    res.status(200).json({ message: "Estado actualizado correctamente" });
+    if (statusUpdate.affectedRows === 0) {
+      return res.status(404).json({ message: "No se pudo actualizar el estado del trabajo" });
+    }
+
+    // 3️⃣ Enviar una única respuesta después de ambas actualizaciones
+    res.status(200).json({ message: "Hora de inicio y estado actualizados correctamente" });
 
   } catch (error) {
-    console.error("Error al actualizar la hora de inicio del trabajo:", error);
+    console.error("Error al actualizar el trabajo:", error);
     res.status(500).json({ message: "Something goes wrong" });
   }
 };
+
 
 export const endJob = async (req, res) => {
   try {
