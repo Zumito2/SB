@@ -332,6 +332,7 @@ export const deleteJob = async (req, res) => {
 };
 
 export const createUserJob = async (req, res) => {
+  console.log("Iniciando createUserJob")
   try {
     const { idUser, idJob } = req.body; // Obtener idUser e idJob del cuerpo de la solicitud
 
