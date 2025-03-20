@@ -387,37 +387,27 @@ export const updateUserJob = async (req, res) => {
   try {
     const { idUser, idJob } = req.body; // Obtener idUser e idJob del cuerpo de la solicitud
 
-    // Verificar que los parámetros necesarios estén presentes
+    // Verificar que los parámetros necesarios estén presentes antes de hacer cualquier operación
     if (!idUser || !idJob) {
       return res.status(400).json({ message: "Faltan parámetros: idUser o idJob" });
     }
 
-    // 1️⃣ Verificar si el nuevo idUser y el trabajo idJob existen
-    const [userExists] = await pool.query('SELECT idUser FROM users WHERE idUser = ?', [idUser]);
-    if (userExists.length === 0) {
+    // 1️⃣ Verificar si el usuario y el trabajo existen antes de eliminar
+    const [[userExists]] = await pool.query('SELECT idUser FROM users WHERE idUser = ?', [idUser]);
+    if (!userExists) {
       return res.status(404).json({ message: "Usuario no encontrado" });
     }
 
-    const [jobExists] = await pool.query('SELECT idJob FROM jobs WHERE idJob = ?', [idJob]);
-    if (jobExists.length === 0) {
+    const [[jobExists]] = await pool.query('SELECT idJob FROM jobs WHERE idJob = ?', [idJob]);
+    if (!jobExists) {
       return res.status(404).json({ message: "Trabajo no encontrado" });
     }
 
-    // 2️⃣ Verificar si la relación ya existe para este idJob y idUser
-    const [relationExists] = await pool.query(
-      'SELECT * FROM users_jobs WHERE idJob = ?',
-      [idJob]
-    );
+    // 2️⃣ Eliminar todos los registros previos del trabajo en users_jobs
+    await pool.query('DELETE FROM users_jobs WHERE idJob = ?', [idJob]);
 
-    if (relationExists.length === 0) {
-      return res.status(404).json({ message: "El trabajo no tiene un usuario asignado" });
-    }
-
-    // 3️⃣ Insertar en users_jobs
-    await pool.query(
-      'INSERT INTO users_jobs (idUser, idJob) VALUES (?, ?)',
-      [idUser, idJob]
-    );
+    // 3️⃣ Insertar la nueva relación usuario-trabajo
+    await pool.query('INSERT INTO users_jobs (idUser, idJob) VALUES (?, ?)', [idUser, idJob]);
 
     // 4️⃣ Responder con éxito
     res.status(200).json({ message: "Usuario actualizado para el trabajo correctamente" });
