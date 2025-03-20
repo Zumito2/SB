@@ -293,11 +293,11 @@ export const updateJob = async (req, res) => {
       [userId, `Trabajo modificado ${name}`]
     );
 
-    // Responder con el ID del trabajo creado
-    res.status(201).json({ id: jobId, dateJob, name, description, address, state, tlf });
+      // Responder con el ID del trabajo modificado
+      res.status(201).json({ idJob: jobId });
   } catch (error) {
-    console.error("Error al modificar el trabajo:", error);
-    res.status(500).json({ message: "Something goes wrong" });
+      console.error("Error al modificar el trabajo:", error);
+      res.status(500).json({ message: "Something goes wrong" });
   }
 };
 
