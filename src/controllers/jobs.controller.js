@@ -420,3 +420,21 @@ export const updateUserJob = async (req, res) => {
     res.status(500).json({ message: "Something goes wrong" });
   }
 };
+
+export const getLastJob = async (req, res) => {
+  try {
+    // Realizar la consulta para obtener el último trabajo insertado
+    const [result] = await pool.query('SELECT * FROM jobs ORDER BY idJob DESC LIMIT 1');
+
+    if (result.length === 0) {
+      return res.status(404).json({ message: "No hay trabajos registrados" });
+    }
+
+    // Enviar el último trabajo encontrado como respuesta
+    res.status(200).json(result[0]);
+
+  } catch (error) {
+    console.error("Error al obtener el último trabajo:", error);
+    res.status(500).json({ message: "Something goes wrong" });
+  }
+};
