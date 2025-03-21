@@ -45,6 +45,7 @@ export const getUser = async (req, res) => {
 // Este controlador maneja la solicitud para crear un nuevo usuario.
 export const createUser = async (req, res) => {
   try {
+    const { userId } = req.params;
     // Extrae los datos del nuevo usuario desde el cuerpo de la solicitud (name, pass, rol).
     const { name, pass, email, tlf, precio, rol } = req.body;
 
@@ -54,6 +55,12 @@ export const createUser = async (req, res) => {
       [name, pass, email, tlf, precio, rol ]
     );
 
+    // Insertar un registro en la tabla de registros
+    await pool.query(
+    "INSERT INTO registros (idUser, comentario, hora) VALUES (?, ?, NOW())",
+    [userId, `Usuario creado ${name}`]
+    );
+
     // Responde con el ID del nuevo usuario junto con su nombre, contraseña y rol.
     res.status(201).json({ id: rows.insertId, name, rol, tlf, email, precio });
   } catch (error) {
@@ -61,10 +68,6 @@ export const createUser = async (req, res) => {
     return res.status(500).json({ message: "Something goes wrong" });
   }
 
-  const [rows] = await pool.query(
-    "INSERT INTO registros VALUES (?, ?, NOW())", 
-    [userId, `Usuario creado ${id}`]
-);
 };
 
 // **Eliminar un usuario**
@@ -73,6 +76,7 @@ export const deleteUser = async (req, res) => {
   try {
     // Extrae el ID del usuario a eliminar desde los parámetros de la solicitud.
     const { id } = req.params;
+    const { userId } = req.params;
 
     // Realiza una consulta SQL para eliminar un usuario de la base de datos utilizando su ID.
     const [result] = await pool.query("DELETE FROM users WHERE idUser = ?", [Number(id)]);
@@ -82,6 +86,12 @@ export const deleteUser = async (req, res) => {
       return res.status(404).json({ message: "Usuario no encontrado" });
     }
 
+    // Insertar un registro en la tabla de registros
+    await pool.query(
+      "INSERT INTO registros (idUser, comentario, hora) VALUES (?, ?, NOW())",
+      [userId, `Usuario eliminado ${id}`]
+      );
+
     // Responde con un estado 204 (No Content) si la eliminación fue exitosa.
     res.sendStatus(204);
   } catch (error) {
@@ -90,11 +100,6 @@ export const deleteUser = async (req, res) => {
     return res.status(500).json({ message: "Something goes wrong" });
   }
 
-  const [rows] = await pool.query(
-    "INSERT INTO registros VALUES (?, ?, NOW())", 
-    [userId, `Usuario eliminado ${id}`]
-  );
-
 };
 
 // **Modificar un usuario**
@@ -102,7 +107,8 @@ export const deleteUser = async (req, res) => {
 export const updateUser = async (req, res) => {
   try {
     // Extrae el ID del usuario a modificar desde los parámetros de la solicitud.
-    const { id } = req.params;
+    const { idUser } = req.params;
+    const { userId } = req.params;
 
     // Extrae los nuevos valores del usuario (name, pass, rol) desde el cuerpo de la solicitud.
     const { name, pass, rol, tlf, email } = req.body;
@@ -111,7 +117,7 @@ export const updateUser = async (req, res) => {
     // La función `IFNULL(?, value)` asegura que solo los campos no nulos sean actualizados.
     const [result] = await pool.query(
       "UPDATE users SET name = IFNULL(?, name), pass = IFNULL(?, pass), rol = IFNULL(?, rol),  tlf = IFNULL(?, tlf),  email = IFNULL(?, email) WHERE idUser = ?",
-      [name, pass, rol, tlf, email, id]
+      [name, pass, rol, tlf, email, idUser]
     );
 
     // Si no se actualizó ningún registro (afectó 0 filas), responde con un error 404 (Not Found).
@@ -121,17 +127,17 @@ export const updateUser = async (req, res) => {
     // Si la actualización fue exitosa, obtiene el usuario actualizado y lo devuelve en formato JSON.
     const [rows] = await pool.query("SELECT * FROM users WHERE idUser = ?", [id]);
 
+    // Insertar un registro en la tabla de registros
+    await pool.query(
+      "INSERT INTO registros (idUser, comentario, hora) VALUES (?, ?, NOW())",
+      [userId, `Usuario modificado ${name}`]
+      );
+
     res.json(rows[0]);
   } catch (error) {
     // Si ocurre un error durante la actualización, se responde con un error 500 (Internal Server Error).
     return res.status(500).json({ message: "Something goes wrong" });
   }
-
-  const [rows] = await pool.query(
-    "INSERT INTO registros VALUES (?, ?, NOW())", 
-    [userId, `Usuario modificado ${id}`]
-  );
-
 };
 
 

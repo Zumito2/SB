@@ -20,15 +20,15 @@ router.get('/users/:id', authenticateToken, getUser);
 
 // Define una ruta POST para crear un nuevo usuario.
 // La ruta `/users/` recibe datos en el cuerpo de la solicitud y ejecuta el controlador `createUser`.
-router.post('/users/', authenticateToken, createUser);
+router.post('/users/:userId', authenticateToken, createUser);
 
 // Define una ruta PUT para actualizar un usuario existente según su ID.
 // La ruta `/users/:id` usa un parámetro `id` en la URL y se ejecuta el controlador `updateUser`.
-router.put('/users/:id', authenticateToken, updateUser);
+router.put('/users/:userId/:idUser', authenticateToken, updateUser);
 
 // Define una ruta DELETE para eliminar un usuario según su ID.
 // La ruta `/users/:id` usa un parámetro `id` en la URL y se ejecuta el controlador `deleteUser`.
-router.delete('/users/:id', authenticateToken, deleteUser);
+router.delete('/users/:userId/:idUser', authenticateToken, deleteUser);
 
 router.get('/usersByJob/:idJob', authenticateToken, getUsersByJob);
 

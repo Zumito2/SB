@@ -109,25 +109,6 @@ export const getJob = async (req, res) => {
   }
 };
 
-/*export const getJobsByUser = async (req, res) => {
-  try {
-      const userId = parseInt(req.params.id, 10);
-      if (isNaN(userId)) {
-          return res.status(400).json({ message: "Invalid user ID" });
-      }
-
-      const [rows] = await pool.query(
-          `SELECT * FROM jobs WHERE tecnicoId = ?;`, // Corregir consulta
-          [userId]
-      );
-
-      res.json(rows);
-  } catch (error) {
-      console.error("Error al ejecutar la consulta:", error);
-      res.status(500).json({ message: "Something goes wrong" });
-  }
-};*/
-
 export const getJobsByUser = async (req, res) => {
   try {
       const userId = parseInt(req.params.id, 10);
