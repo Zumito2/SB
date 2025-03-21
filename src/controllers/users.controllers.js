@@ -102,46 +102,6 @@ export const deleteUser = async (req, res) => {
 
 };
 
-/*
-// **Modificar un usuario**
-// Este controlador maneja la solicitud para actualizar los datos de un usuario.
-export const updateUser = async (req, res) => {
-  try {
-    // Extrae el ID del usuario a modificar desde los parámetros de la solicitud.
-    const { idUser } = req.params;
-    const { userId } = req.params;
-
-    // Extrae los nuevos valores del usuario (name, pass, rol) desde el cuerpo de la solicitud.
-    const { name, pass, rol, tlf, email } = req.body;
-
-    // Realiza una consulta SQL para actualizar los datos del usuario.
-    // La función `IFNULL(?, value)` asegura que solo los campos no nulos sean actualizados.
-    const [result] = await pool.query(
-      "UPDATE users SET name = IFNULL(?, name), pass = IFNULL(?, pass), rol = IFNULL(?, rol),  tlf = IFNULL(?, tlf),  email = IFNULL(?, email) WHERE idUser = ?",
-      [name, pass, rol, tlf, email, idUser]
-    );
-
-    // Si no se actualizó ningún registro (afectó 0 filas), responde con un error 404 (Not Found).
-    if (result.affectedRows === 0)
-      return res.status(404).json({ message: "User not found" });
-
-    // Si la actualización fue exitosa, obtiene el usuario actualizado y lo devuelve en formato JSON.
-    const [rows] = await pool.query("SELECT * FROM users WHERE idUser = ?", [idUser]);
-
-    // Insertar un registro en la tabla de registros
-    await pool.query(
-      "INSERT INTO registros (idUser, comentario, hora) VALUES (?, ?, NOW())",
-      [userId, `Usuario modificado ${name}`]
-      );
-
-    res.json(rows[0]);
-  } catch (error) {
-    // Si ocurre un error durante la actualización, se responde con un error 500 (Internal Server Error).
-    return res.status(500).json({ message: "Something goes wrong" });
-  }
-};
-*/
-
 export const updateUser = async (req, res) => {
   try {
     const { idUser } = req.params;
