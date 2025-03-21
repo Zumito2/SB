@@ -10,3 +10,6 @@ import { authenticateToken } from '../authMiddleware.js'; // Importa el middlewa
 const router = Router();
 
 router.get('/history', authenticateToken, getHistory);
+
+// Exporta el objeto `router` para que pueda ser utilizado en otros archivos de la aplicación.
+export default router;
