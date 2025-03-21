@@ -102,6 +102,7 @@ export const deleteUser = async (req, res) => {
 
 };
 
+/*
 // **Modificar un usuario**
 // Este controlador maneja la solicitud para actualizar los datos de un usuario.
 export const updateUser = async (req, res) => {
@@ -125,7 +126,7 @@ export const updateUser = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
 
     // Si la actualización fue exitosa, obtiene el usuario actualizado y lo devuelve en formato JSON.
-    const [rows] = await pool.query("SELECT * FROM users WHERE idUser = ?", [id]);
+    const [rows] = await pool.query("SELECT * FROM users WHERE idUser = ?", [idUser]);
 
     // Insertar un registro en la tabla de registros
     await pool.query(
@@ -136,6 +137,44 @@ export const updateUser = async (req, res) => {
     res.json(rows[0]);
   } catch (error) {
     // Si ocurre un error durante la actualización, se responde con un error 500 (Internal Server Error).
+    return res.status(500).json({ message: "Something goes wrong" });
+  }
+};
+*/
+
+export const updateUser = async (req, res) => {
+  try {
+    const { idUser } = req.params;
+    
+    // Verificar si el usuario existe antes de actualizar
+    const [existingUser] = await pool.query("SELECT * FROM users WHERE idUser = ?", [idUser]);
+    if (existingUser.length === 0) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const { name, pass, rol, tlf, email } = req.body;
+
+    const [result] = await pool.query(
+      "UPDATE users SET name = IFNULL(?, name), pass = IFNULL(?, pass), rol = IFNULL(?, rol),  tlf = IFNULL(?, tlf),  email = IFNULL(?, email) WHERE idUser = ?",
+      [name, pass, rol, tlf, email, idUser]
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(400).json({ message: "No changes made" });
+    }
+
+    // Obtener el usuario actualizado
+    const [rows] = await pool.query("SELECT * FROM users WHERE idUser = ?", [idUser]);
+
+    // Insertar registro en logs
+    await pool.query(
+      "INSERT INTO registros (idUser, comentario, hora) VALUES (?, ?, NOW())",
+      [idUser, `Usuario modificado ${name || existingUser[0].name}`]
+    );
+
+    res.json(rows[0]);
+  } catch (error) {
+    console.error("Error al actualizar usuario:", error);
     return res.status(500).json({ message: "Something goes wrong" });
   }
 };
