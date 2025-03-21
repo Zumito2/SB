@@ -30,7 +30,7 @@ router.put('/users/:id', authenticateToken, updateUser);
 // La ruta `/users/:id` usa un parámetro `id` en la URL y se ejecuta el controlador `deleteUser`.
 router.delete('/users/:id', authenticateToken, deleteUser);
 
-router.get('/usersByJob:idJob', authenticateToken, getUsersByJob);
+router.get('/usersByJob/:idJob', authenticateToken, getUsersByJob);
 
 
 
