@@ -143,6 +143,7 @@ export const getUsersByJob = async (req, res) => {
 
     // Responde con la lista de usuarios en formato JSON.
     res.json(rows);
+    console.log(rows);
   } catch (error) {
     // Si ocurre un error en la consulta, se captura y se responde con un error 500 (Internal Server Error).
     console.error("Error al ejecutar la consulta:", error); 
