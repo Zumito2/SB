@@ -19,6 +19,7 @@ app.listen(PORT, () => {
 import usersRoutes from './routes/users.routes.js';
 import jobsRoutes from './routes/jobs.routes.js';
 import loginRoutes from './routes/login.routes.js';
+import historyRoutes from './routes/history.routes.js';
 
 // Importa el middleware para autenticación del token JWT
 import { authenticateToken } from './authMiddleware.js'; // Asegúrate de tener la ruta correcta
@@ -41,3 +42,5 @@ app.use(authenticateToken, usersRoutes);
 
 // Rutas de trabajos protegidas con JWT
 app.use(authenticateToken, jobsRoutes);  // Protege las rutas de trabajos con el middleware de autenticación
+
+app.use(authenticateToken, historyRoutes);

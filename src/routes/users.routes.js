@@ -4,7 +4,7 @@ import { Router } from 'express';
 
 // Importa los controladores de usuarios desde el archivo `users.controllers.js`.
 // Estos controladores son funciones que se encargan de manejar las solicitudes HTTP para los usuarios.
-import { getUsers, createUser, updateUser, deleteUser, getUser } from '../controllers/users.controllers.js';
+import { getUsers, createUser, updateUser, deleteUser, getUser, getUserByJob } from '../controllers/users.controllers.js';
 import { authenticateToken } from '../authMiddleware.js'; // Importa el middleware
 
 // Crea una instancia de `Router` para definir las rutas de la API.
@@ -29,6 +29,8 @@ router.put('/users/:id', authenticateToken, updateUser);
 // Define una ruta DELETE para eliminar un usuario según su ID.
 // La ruta `/users/:id` usa un parámetro `id` en la URL y se ejecuta el controlador `deleteUser`.
 router.delete('/users/:id', authenticateToken, deleteUser);
+
+router.get('/usersByJob:idJob', authenticateToken, getUserByJob);
 
 
 
