@@ -75,11 +75,11 @@ export const createUser = async (req, res) => {
 export const deleteUser = async (req, res) => {
   try {
     // Extrae el ID del usuario a eliminar desde los parámetros de la solicitud.
-    const { id } = req.params;
+    const { idUser } = req.params;
     const { userId } = req.params;
 
     // Realiza una consulta SQL para eliminar un usuario de la base de datos utilizando su ID.
-    const [result] = await pool.query("DELETE FROM users WHERE idUser = ?", [Number(id)]);
+    const [result] = await pool.query("DELETE FROM users WHERE idUser = ?", [Number(idUser)]);
 
     // Si no se eliminó ningún registro, responde con un error 404 (Not Found).
     if (result.affectedRows <= 0) {
@@ -89,7 +89,7 @@ export const deleteUser = async (req, res) => {
     // Insertar un registro en la tabla de registros
     await pool.query(
       "INSERT INTO registros (idUser, comentario, hora) VALUES (?, ?, NOW())",
-      [userId, `Usuario eliminado ${id}`]
+      [userId, `Usuario eliminado ${idUser}`]
       );
 
     // Responde con un estado 204 (No Content) si la eliminación fue exitosa.
