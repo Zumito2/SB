@@ -137,6 +137,7 @@ export const updateUser = async (req, res) => {
 
 export const getUsersByJob = async (req, res) => {
   try {
+    console.log("Iniciando getUsersByJob")
     const { idJob } = req.params;
     // Realiza una consulta SQL para obtener todos los usuarios.
     const [rows] = await pool.query("SELECT u.* FROM users u JOIN users_jobs j ON u.idUser = j.idUser WHERE j.idJob = ?", [idJob]);
