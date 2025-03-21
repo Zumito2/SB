@@ -46,16 +46,16 @@ export const getUser = async (req, res) => {
 export const createUser = async (req, res) => {
   try {
     // Extrae los datos del nuevo usuario desde el cuerpo de la solicitud (name, pass, rol).
-    const { name, pass, rol } = req.body;
+    const { name, pass, email, tlf, precio, rol } = req.body;
 
     // Realiza una consulta SQL para insertar un nuevo usuario en la base de datos.
     const [rows] = await pool.query(
-      "INSERT INTO users (name, pass, rol) VALUES (?, ?, ?)",
-      [name, pass, rol]
+      "INSERT INTO users (name, pass, email, tlf, precio, rol) VALUES (?, ?, ?, ?, ?, ?)",
+      [name, pass, email, tlf, precio, rol ]
     );
 
     // Responde con el ID del nuevo usuario junto con su nombre, contraseña y rol.
-    res.status(201).json({ id: rows.insertId, name, pass, rol });
+    res.status(201).json({ id: rows.insertId, name, rol, tlf, email, precio });
   } catch (error) {
     // Si ocurre un error en la consulta, se responde con un error 500 (Internal Server Error).
     return res.status(500).json({ message: "Something goes wrong" });
