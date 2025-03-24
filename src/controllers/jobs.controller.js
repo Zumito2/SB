@@ -405,9 +405,7 @@ export const guardarNota = async (req, res) => {
       return res.status(404).json({ message: "Trabajo no encontrado" });
     }
 
-    // 3️⃣ Insertar la nueva relación usuario-trabajo
     await pool.query('INSERT INTO jobs (notas) VALUES (?) WHERE idJob = ?', [notas, idJob]);
-
 
   } catch (error) {
     console.error("Error al insertar notas:", error);
