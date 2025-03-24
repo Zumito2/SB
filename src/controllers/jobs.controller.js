@@ -231,12 +231,12 @@ export const createJob = async (req, res) => {
   try {
     const { userId } = req.params;
 
-    const { dateJob, name, description, address, state, tlf, presencial } = req.body;
+    const { dateJob, name, description, address, state, tlf, presencial, notas } = req.body;
 
     // Insertar el trabajo en la base de datos
     const [jobResult] = await pool.query(
-      "INSERT INTO jobs (dateJob, name, description, address, state, tlf, presencial) VALUES (?, ?, ?, ?, ?, ?, ?)",
-      [dateJob, name, description, address, state, tlf, presencial]
+      "INSERT INTO jobs (dateJob, name, description, address, state, tlf, presencial, notas) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+      [dateJob, name, description, address, state, tlf, presencial, notas ]
     );
 
     const jobId = jobResult.insertId; // Obtener el ID del nuevo trabajo
@@ -258,12 +258,12 @@ export const createJob = async (req, res) => {
 export const updateJob = async (req, res) => {
   try {
     const { userId } = req.params;  // userId de los parámetros de la URL
-    const { idJob, dateJob, name, description, address, state, tlf, presencial } = req.body;
+    const { idJob, dateJob, name, description, address, state, tlf, presencial, notas } = req.body;
 
     // Actualizar el trabajo en la base de datos
     const [jobResult] = await pool.query(
-      'UPDATE jobs SET dateJob = ?, name = ?, description = ?, address = ?, state = ?, tlf = ? , presencial = ? WHERE idJob = ?',
-      [dateJob, name, description, address, state, tlf, presencial, idJob]
+      'UPDATE jobs SET dateJob = ?, name = ?, description = ?, address = ?, state = ?, tlf = ? , presencial = ?, notas = ? WHERE idJob = ?',
+      [dateJob, name, description, address, state, tlf, presencial, notas, idJob]
     );
 
     // Si no se actualizó ninguna fila, se puede retornar un error indicando que no se encontró el trabajo.
