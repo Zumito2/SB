@@ -361,15 +361,15 @@ export const createUserJob = async (req, res) => {
 
 export const updateUserJob = async (req, res) => {
   try {
-    const { idUser, idJob, fecha_inicio, fecha_fin } = req.body; // Obtener idUser, idJob y fechas del cuerpo de la solicitud
+    const { userId, idJob, fecha_inicio, fecha_fin } = req.body; // Obtener idUser, idJob y fechas del cuerpo de la solicitud
 
     // Verificar que los parámetros necesarios estén presentes antes de hacer cualquier operación
-    if (!idUser || !idJob) {
+    if (!userId || !idJob) {
       return res.status(400).json({ message: "Faltan parámetros: idUser o idJob" });
     }
 
     // 1️⃣ Verificar si el usuario y el trabajo existen antes de eliminar
-    const [[userExists]] = await pool.query('SELECT idUser FROM users WHERE idUser = ?', [idUser]);
+    const [[userExists]] = await pool.query('SELECT idUser FROM users WHERE idUser = ?', [userId]);
     if (!userExists) {
       return res.status(404).json({ message: "Usuario no encontrado" });
     }
@@ -383,7 +383,7 @@ export const updateUserJob = async (req, res) => {
     await pool.query('DELETE FROM users_jobs WHERE idJob = ?', [idJob]);
 
     // 3️⃣ Insertar la nueva relación usuario-trabajo
-    await pool.query('INSERT INTO users_jobs (idUser, idJob, fecha_inicio, fecha_fin) VALUES (?, ?, ?, ?)', [idUser, idJob, fecha_inicio, fecha_fin]);
+    await pool.query('INSERT INTO users_jobs (idUser, idJob, fecha_inicio, fecha_fin) VALUES (?, ?, ?, ?)', [userId, idJob, fecha_inicio, fecha_fin]);
 
     // 4️⃣ Responder con éxito
     res.status(200).json({ message: "Usuario actualizado para el trabajo correctamente" });
