@@ -361,7 +361,7 @@ export const createUserJob = async (req, res) => {
 
 export const updateUserJob = async (req, res) => {
   try {
-    const { idUser, idJob } = req.body; // Obtener idUser e idJob del cuerpo de la solicitud
+    const { idUser, idJob, fecha_inicio, fecha_fin } = req.body; // Obtener idUser, idJob y fechas del cuerpo de la solicitud
 
     // Verificar que los parámetros necesarios estén presentes antes de hacer cualquier operación
     if (!idUser || !idJob) {
@@ -383,7 +383,7 @@ export const updateUserJob = async (req, res) => {
     await pool.query('DELETE FROM users_jobs WHERE idJob = ?', [idJob]);
 
     // 3️⃣ Insertar la nueva relación usuario-trabajo
-    await pool.query('INSERT INTO users_jobs (idUser, idJob) VALUES (?, ?)', [idUser, idJob]);
+    await pool.query('INSERT INTO users_jobs (idUser, idJob, fecha_inicio, fecha_fin) VALUES (?, ?, ?, ?)', [idUser, idJob, fecha_inicio, fecha_fin]);
 
     // 4️⃣ Responder con éxito
     res.status(200).json({ message: "Usuario actualizado para el trabajo correctamente" });
