@@ -406,6 +406,7 @@ export const guardarNota = async (req, res) => {
     }
 
     await pool.query('INSERT INTO jobs (notas) VALUES (?) WHERE idJob = ?', [notas, idJob]);
+    res.status(200).json({ message: "Nota guardada correctamente" });
 
   } catch (error) {
     console.error("Error al insertar notas:", error);
