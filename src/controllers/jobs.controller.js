@@ -405,7 +405,11 @@ export const guardarNota = async (req, res) => {
       return res.status(404).json({ message: "Trabajo no encontrado" });
     }
 
-    await pool.query('INSERT INTO jobs (notas) VALUES (?) WHERE idJob = ?', [notas, idJob]);
+    if (jobExists.notas) {
+      return res.status(400).json({ message: "La nota ya ha sido guardada y no se puede editar" });
+    }
+
+    await pool.query('UPDATE jobs SET notas = ? WHERE idJob = ?', [notas, idJob]);
     res.status(200).json({ message: "Nota guardada correctamente" });
 
   } catch (error) {
