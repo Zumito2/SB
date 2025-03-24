@@ -37,7 +37,7 @@ router.post('/userjob', authenticateToken, createUserJob);
 
 router.put('/userjob', authenticateToken, updateUserJob);
 
-router.post('/notas/:idJob', authenticateToken, guardarNota);
+router.put('/notas/:idJob', authenticateToken, guardarNota);
 
 // Exporta el objeto `router` para que pueda ser utilizado en otros archivos de la aplicación.
 export default router;
