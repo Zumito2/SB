@@ -74,7 +74,7 @@ export const getJobsDate = async (req, res) => {
       }
 
       const [rows] = await pool.query(
-          `SELECT j.idJob, j.dateJob, j.name, j.description, j.address, j.state, j.tlf
+          `SELECT j.idJob, j.dateJob, j.name, j.description, j.address, j.state, j.tlf, j.presencial
            FROM jobs j 
            JOIN users_jobs uj ON j.idJob = uj.idJob 
            WHERE uj.idUser = ? AND DATE(j.dateJob) = ?;`,
@@ -231,12 +231,12 @@ export const createJob = async (req, res) => {
   try {
     const { userId } = req.params;
 
-    const { dateJob, name, description, address, state, tlf } = req.body;
+    const { dateJob, name, description, address, state, tlf, presencial } = req.body;
 
     // Insertar el trabajo en la base de datos
     const [jobResult] = await pool.query(
-      "INSERT INTO jobs (dateJob, name, description, address, state, tlf) VALUES (?, ?, ?, ?, ?, ?)",
-      [dateJob, name, description, address, state, tlf]
+      "INSERT INTO jobs (dateJob, name, description, address, state, tlf, presencial) VALUES (?, ?, ?, ?, ?, ?, ?)",
+      [dateJob, name, description, address, state, tlf, presencial]
     );
 
     const jobId = jobResult.insertId; // Obtener el ID del nuevo trabajo
@@ -258,12 +258,12 @@ export const createJob = async (req, res) => {
 export const updateJob = async (req, res) => {
   try {
     const { userId } = req.params;  // userId de los parámetros de la URL
-    const { idJob, dateJob, name, description, address, state, tlf } = req.body;
+    const { idJob, dateJob, name, description, address, state, tlf, presencial } = req.body;
 
     // Actualizar el trabajo en la base de datos
     const [jobResult] = await pool.query(
-      'UPDATE jobs SET dateJob = ?, name = ?, description = ?, address = ?, state = ?, tlf = ? WHERE idJob = ?',
-      [dateJob, name, description, address, state, tlf, idJob]
+      'UPDATE jobs SET dateJob = ?, name = ?, description = ?, address = ?, state = ?, tlf = ? , presencial = ? WHERE idJob = ?',
+      [dateJob, name, description, address, state, tlf, presencial, idJob]
     );
 
     // Si no se actualizó ninguna fila, se puede retornar un error indicando que no se encontró el trabajo.

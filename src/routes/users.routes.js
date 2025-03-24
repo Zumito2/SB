@@ -34,5 +34,7 @@ router.get('/usersByJob/:idJob', authenticateToken, getUsersByJob);
 
 
 
+
+
 // Exporta el objeto `router` para que pueda ser utilizado en otros archivos de la aplicación.
 export default router;
