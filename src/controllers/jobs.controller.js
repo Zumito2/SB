@@ -374,7 +374,7 @@ export const updateUserJob = async (req, res) => {
       return res.status(404).json({ message: "Usuario no encontrado" });
     }
 
-    const [[jobExists]] = await pool.query('SELECT idJob FROM jobs WHERE idJob = ?', [userId]);
+    const [[jobExists]] = await pool.query('SELECT idJob FROM jobs WHERE idJob = ?', [idJob]);
     if (!jobExists) {
       return res.status(404).json({ message: "Trabajo no encontrado" });
     }
