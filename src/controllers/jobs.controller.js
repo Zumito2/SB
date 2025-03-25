@@ -393,3 +393,27 @@ export const updateUserJob = async (req, res) => {
     res.status(500).json({ message: "Something goes wrong" });
   }
 };
+
+
+export const guardarNota = async (req, res) => {
+  try{
+    const { notas } = req.body
+    const { idJob } = req.params
+
+    const [[jobExists]] = await pool.query('SELECT idJob FROM jobs WHERE idJob = ?', [idJob]);
+    if (!jobExists) {
+      return res.status(404).json({ message: "Trabajo no encontrado" });
+    }
+
+    if (jobExists.notas) {
+      return res.status(400).json({ message: "La nota ya ha sido guardada y no se puede editar" });
+    }
+
+    await pool.query('UPDATE jobs SET notas = ? WHERE idJob = ?', [notas, idJob]);
+    res.status(200).json({ message: "Nota guardada correctamente" });
+
+  } catch (error) {
+    console.error("Error al insertar notas:", error);
+    res.status(500).json({ message: "Something goes wrong" });
+  }
+};
