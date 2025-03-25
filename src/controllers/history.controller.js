@@ -3,7 +3,7 @@ import { pool } from '../db.js';
 export const getHistory = async (req, res) => {
     try {
       // Realiza una consulta SQL para obtener todos los registros.
-      const [rows] = await pool.query("SELECT * FROM registros ORDER BY idRegistro ASC;");
+      const [rows] = await pool.query("SELECT * FROM registros ORDER BY idRegistro DESC;");
   
       // Responde con la lista de trabajos en formato JSON.
       res.json(rows);
