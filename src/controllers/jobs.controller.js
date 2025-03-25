@@ -163,7 +163,7 @@ export const startJob = async (req, res) => {
     }
 
     // 2️⃣ Segunda consulta: Actualizar estado en la tabla jobs
-    const newStatus = "En proceso";
+    const newStatus = "En Progreso";
     const [statusUpdate] = await pool.query(
       'UPDATE jobs SET state = ? WHERE idJob = ?',
       [newStatus, idJob]
