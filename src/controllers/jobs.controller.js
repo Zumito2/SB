@@ -74,7 +74,7 @@ export const getJobsDate = async (req, res) => {
       }
 
       const [rows] = await pool.query(
-          `SELECT j.idJob, j.dateJob, j.name, j.description, j.address, j.state, j.tlf, j.presencial
+          `SELECT j.idJob, j.dateJob, j.name, j.description, j.address, j.state, j.tlf, j.presencial, j.notas
            FROM jobs j 
            JOIN users_jobs uj ON j.idJob = uj.idJob 
            WHERE uj.idUser = ? AND DATE(j.dateJob) = ?;`,
