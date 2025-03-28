@@ -66,7 +66,7 @@ export const getJobsFecha = async (req, res) => {
 export const getJobsPendiente = async (req, res) => {
   try {
     const [rows] = await pool.query(
-      `SELECT * FROM jobs WHERE dateJob < now() AND state = "Pendiente" OR state = "En Progreso";`,
+      `SELECT * FROM jobs WHERE dateJob < now() AND (state = "Pendiente" OR state = "En Progreso");`,
     );
 
     console.log("Resultados:", rows); // Depuración
