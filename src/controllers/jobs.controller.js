@@ -64,18 +64,16 @@ export const getJobsFecha = async (req, res) => {
 };
 
 export const getJobsPendiente = async (req, res) => {
-  console.log("Buscando trabajos pendientes")
   try {
-    const [rows] = await pool.query(
-      `SELECT * FROM jobs WHERE dateJob < now() AND (state = "Pendiente" OR state = "En Progreso");`,
-    );
+    // Realiza una consulta SQL para obtener todos los trabajos pendientes.
+    const [rows] = await pool.query('SELECT * FROM jobs WHERE dateJob < now() AND (state = "Pendiente" OR state = "En Progreso")');
 
-    console.log("Resultados:", rows);
-
+    // Responde con la lista de trabajos pendientes en formato JSON.
     res.json(rows);
   } catch (error) {
-    console.error("Error al ejecutar la consulta:", error);
-    res.status(500).json({ message: "Something goes wrong" });
+    // Si ocurre un error en la consulta, se captura y se responde con un error 500 (Internal Server Error).
+    console.error("Error al ejecutar la consulta:", error); 
+    return res.status(500).json({ message: "Something goes wrong" });
   }
 };
 
