@@ -64,12 +64,13 @@ export const getJobsFecha = async (req, res) => {
 };
 
 export const getJobsPendiente = async (req, res) => {
+  console.log("Buscando trabajos pendientes")
   try {
     const [rows] = await pool.query(
       `SELECT * FROM jobs WHERE dateJob < now() AND (state = "Pendiente" OR state = "En Progreso");`,
     );
 
-    console.log("Resultados:", rows); // Depuración
+    console.log("Resultados:", rows);
 
     res.json(rows);
   } catch (error) {
