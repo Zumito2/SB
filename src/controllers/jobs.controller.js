@@ -63,6 +63,21 @@ export const getJobsFecha = async (req, res) => {
   }
 };
 
+export const getJobsPendiente = async (req, res) => {
+  try {
+    const [rows] = await pool.query(
+      `SELECT * FROM jobs WHERE dateJob < now() AND state = "Pendiente" OR state = "En Progreso";`,
+    );
+
+    console.log("Resultados:", rows); // Depuración
+
+    res.json(rows);
+  } catch (error) {
+    console.error("Error al ejecutar la consulta:", error);
+    res.status(500).json({ message: "Something goes wrong" });
+  }
+};
+
 
 export const getJobsDate = async (req, res) => {
   try {
