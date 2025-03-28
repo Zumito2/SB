@@ -17,7 +17,7 @@ router.get('/jobs/:id', authenticateToken, getJobsId);
 
 router.get('/jobs/fecha/:fecha', authenticateToken, getJobsFecha);
 
-router.get('/jobs/pendiente', authenticateToken, getJobsPendiente);
+router.get('/jobsPendiente', authenticateToken, getJobsPendiente);
 
 router.get('/jobs/:id/:fecha', authenticateToken, getJobsDate);
 
