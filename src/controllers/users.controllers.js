@@ -214,4 +214,16 @@ export const setLocation = async (req, res) => {
   }
 };
 
+export const getRecentlyLocation = async (req, res) => {
+  try {
+    // Realiza una consulta SQL para obtener todas las ubicaciones.
+    const [rows] = await pool.query("SELECT * FROM location WHERE fecha BETWEEN NOW() - INTERVAL 30 MINUTE AND NOW()");
 
+    // Responde con la lista de ubicaciones en formato JSON.
+    res.json(rows);
+  } catch (error) {
+    // Si ocurre un error en la consulta, se captura y se responde con un error 500 (Internal Server Error).
+    console.error("Error al ejecutar la consulta:", error); 
+    return res.status(500).json({ message: "Something goes wrong" });
+  }
+};
