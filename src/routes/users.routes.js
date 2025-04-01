@@ -32,7 +32,7 @@ router.delete('/users/:userId/:idUser', authenticateToken, deleteUser);
 
 router.get('/usersByJob/:idJob', authenticateToken, getUsersByJob);
 
-router.get('help', authenticateToken, getHelp)
+router.get('/help', authenticateToken, getHelp)
 
 
 

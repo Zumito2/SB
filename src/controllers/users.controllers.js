@@ -161,7 +161,7 @@ export const getUsersByJob = async (req, res) => {
 // Este controlador maneja la solicitud para obtener un usuario por su ID.
 export const getHelp = async (req, res) => {
   try {
-    // Realiza una consulta SQL para obtener un usuario por su ID. `req.params.id` obtiene el ID desde los parámetros de la URL.
+    // Realiza una consulta SQL para obtener un usuario por su ID.
     const [rows] = await pool.query('SELECT * FROM users WHERE idUser = 999');
 
     // Si no se encuentra ningún usuario con el ID especificado, se responde con un error 404 (Not Found).
