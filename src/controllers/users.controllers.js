@@ -164,7 +164,7 @@ export const getHelp = async (req, res) => {
     
     // Verifica si el teléfono fue encontrado y envíalo directamente
     if (rows.length > 0) {
-      res.json(rows[0].tlf);
+      res.json(rows[0]);
     } else {
       // Si no se encuentra el usuario, puedes enviar un mensaje de error
       return res.status(404).json({ message: "User not found" });
