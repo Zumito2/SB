@@ -162,7 +162,7 @@ export const getUsersByJob = async (req, res) => {
 export const getHelp = async (req, res) => {
   try {
     // Realiza una consulta SQL para obtener un usuario por su ID.
-    const [rows] = await pool.query('SELECT * FROM users WHERE idUser = 999');
+    const [rows] = await pool.query('SELECT tlf FROM users WHERE idUser = 999');
 
     // Si no se encuentra ningún usuario con el ID especificado, se responde con un error 404 (Not Found).
     if (rows.length <= 0) {
