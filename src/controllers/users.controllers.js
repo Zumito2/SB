@@ -156,3 +156,22 @@ export const getUsersByJob = async (req, res) => {
     return res.status(500).json({ message: "Something goes wrong" });
   }
 };
+
+export const getHelp = async (req, res) => {
+  try {
+    // Realiza una consulta SQL para obtener el usuario oficina por su ID. 
+    const [rows] = await pool.query('SELECT tlf FROM users WHERE idUser = 999');
+    
+    // Verifica si el teléfono fue encontrado y envíalo directamente
+    if (rows.length > 0) {
+      res.json(rows[0].tlf);
+    } else {
+      // Si no se encuentra el usuario, puedes enviar un mensaje de error
+      return res.status(404).json({ message: "User not found" });
+    }
+  } catch (error) {
+    // En caso de un error, se responde con un error 500 (Internal Server Error).
+    return res.status(500).json({ message: "Something goes wrong" });
+  }
+};
+
