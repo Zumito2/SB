@@ -157,18 +157,20 @@ export const getUsersByJob = async (req, res) => {
   }
 };
 
+// **Buscar usuario por ID**
+// Este controlador maneja la solicitud para obtener un usuario por su ID.
 export const getHelp = async (req, res) => {
   try {
-    // Realiza una consulta SQL para obtener el usuario oficina por su ID. 
-    const [rows] = await pool.query('SELECT tlf FROM users WHERE idUser = 999');
-    
-    // Verifica si el teléfono fue encontrado y envíalo directamente
-    if (rows.length > 0) {
-      res.json(rows);
-    } else {
-      // Si no se encuentra el usuario, puedes enviar un mensaje de error
-      return res.status(404).json({ message: "User not found" });
+    // Realiza una consulta SQL para obtener un usuario por su ID. `req.params.id` obtiene el ID desde los parámetros de la URL.
+    const [rows] = await pool.query('SELECT * FROM users WHERE idUser = 999');
+
+    // Si no se encuentra ningún usuario con el ID especificado, se responde con un error 404 (Not Found).
+    if (rows.length <= 0) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
     }
+
+    // Si el usuario existe, se responde con el usuario encontrado en formato JSON.
+    res.json(rows[0]);
   } catch (error) {
     // En caso de un error, se responde con un error 500 (Internal Server Error).
     return res.status(500).json({ message: "Something goes wrong" });
