@@ -186,3 +186,32 @@ export const getHelp = async (req, res) => {
   }
 };
 
+export const setLocation = async (req, res) => {
+  try {
+    const { idUser, name, latitud, longitud, fecha } = req.body;
+
+    // Validar los parámetros necesarios
+    if (!idUser || !name || !latitud || !longitud || !fecha) {
+      return res.status(400).json({ error: "Faltan datos necesarios" });
+    }
+
+    // SQL para actualizar la ubicación
+    const [result] = await pool.query(
+      "UPDATE location SET latitud = ?, longitud = ?, fecha = NOW() WHERE idUser = ?",
+      [latitud, longitud, idUser]
+    );
+
+    // Verificar si el usuario fue encontrado y actualizado
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+
+    // Respuesta en caso de éxito
+    res.json({ message: "Ubicación actualizada correctamente" });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Something went wrong" });
+  }
+};
+
+
