@@ -55,6 +55,13 @@ export const createUser = async (req, res) => {
       [name, pass, email, tlf, precio, rol ]
     );
 
+    const idUser = rows.insertId;
+
+    await pool.query(
+      "INSERT INTO location (idUser, name, latitud, longitud, fecha) VALUES (?, ?, ?, ?, NOW())",
+      [idUser, name, "", ""]
+    );
+
     // Insertar un registro en la tabla de registros
     await pool.query(
     "INSERT INTO registros (idUser, comentario, hora) VALUES (?, ?, NOW())",
@@ -85,6 +92,8 @@ export const deleteUser = async (req, res) => {
     if (result.affectedRows <= 0) {
       return res.status(404).json({ message: "Usuario no encontrado" });
     }
+
+    await pool.query("DELETE FROM location WHERE idUser = ?", [Number(idUser)]);
 
     // Insertar un registro en la tabla de registros
     await pool.query(
