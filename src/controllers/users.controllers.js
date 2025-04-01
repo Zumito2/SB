@@ -188,10 +188,10 @@ export const getHelp = async (req, res) => {
 
 export const setLocation = async (req, res) => {
   try {
-    const { idUser, name, latitud, longitud, fecha } = req.body;
+    const { idUser, latitud, longitud, fecha } = req.body;
 
     // Validar los parámetros necesarios
-    if (!idUser || !name || !latitud || !longitud || !fecha) {
+    if (!idUser || !latitud || !longitud || !fecha) {
       return res.status(400).json({ error: "Faltan datos necesarios" });
     }
 
