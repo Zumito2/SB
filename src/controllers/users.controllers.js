@@ -10,7 +10,7 @@ dotenv.config();
 export const getUsers = async (req, res) => {
   try {
     // Realiza una consulta SQL para obtener todos los usuarios.
-    const [rows] = await pool.query("SELECT u.idUser, u.name, u.rol, u.tlf, u.email, u.precio FROM users u FROM users");
+    const [rows] = await pool.query("SELECT u.idUser, u.name, u.rol, u.tlf, u.email, u.precio FROM users u");
 
     // Responde con la lista de usuarios en formato JSON.
     res.json(rows);
