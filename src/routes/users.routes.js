@@ -34,11 +34,9 @@ router.get('/usersByJob/:idJob', authenticateToken, getUsersByJob);
 
 router.get('/help', authenticateToken, getHelp);
 
-router.post('/setLocation', authenticateToken, setLocation);
+router.put('/setLocation', authenticateToken, setLocation);
 
 router.get('/getRecentlyLocation', authenticateToken, getRecentlyLocation);
-
-
 
 
 
