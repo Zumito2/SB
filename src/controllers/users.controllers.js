@@ -10,7 +10,7 @@ dotenv.config();
 export const getUsers = async (req, res) => {
   try {
     // Realiza una consulta SQL para obtener todos los usuarios.
-    const [rows] = await pool.query("SELECT * FROM users");
+    const [rows] = await pool.query("SELECT u.idUser, u.name, u.rol, u.tlf, u.email, u.precio FROM users u FROM users");
 
     // Responde con la lista de usuarios en formato JSON.
     res.json(rows);
@@ -26,7 +26,7 @@ export const getUsers = async (req, res) => {
 export const getUser = async (req, res) => {
   try {
     // Realiza una consulta SQL para obtener un usuario por su ID. `req.params.id` obtiene el ID desde los parámetros de la URL.
-    const [rows] = await pool.query('SELECT * FROM users WHERE idUser = ?', [req.params.id]);
+    const [rows] = await pool.query('SELECT u.idUser, u.name, u.rol, u.tlf, u.email, u.precio FROM users u WHERE idUser = ?', [req.params.id]);
 
     // Si no se encuentra ningún usuario con el ID especificado, se responde con un error 404 (Not Found).
     if (rows.length <= 0) {
@@ -154,7 +154,7 @@ export const getUsersByJob = async (req, res) => {
     console.log("Iniciando getUsersByJob")
     const { idJob } = req.params;
     // Realiza una consulta SQL para obtener todos los usuarios.
-    const [rows] = await pool.query("SELECT u.* FROM users u JOIN users_jobs j ON u.idUser = j.idUser WHERE j.idJob = ?", [idJob]);
+    const [rows] = await pool.query("SELECT u.idUser, u.name, u.rol, u.tlf, u.email, u.precio FROM users u JOIN users_jobs j ON u.idUser = j.idUser WHERE j.idJob = ?", [idJob]);
 
     // Responde con la lista de usuarios en formato JSON.
     res.json(rows);
