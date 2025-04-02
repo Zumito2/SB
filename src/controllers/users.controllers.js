@@ -217,7 +217,7 @@ export const setLocation = async (req, res) => {
 export const getRecentlyLocation = async (req, res) => {
   try {
     // Realiza una consulta SQL para obtener todas las ubicaciones.
-    const [rows] = await pool.query("SELECT * FROM location WHERE fecha BETWEEN NOW() - INTERVAL 30 MINUTE AND NOW()");
+    const [rows] = await pool.query("SELECT * FROM location WHERE fecha BETWEEN NOW() - INTERVAL 120 MINUTE AND NOW()");
 
     // Responde con la lista de ubicaciones en formato JSON.
     res.json(rows);
