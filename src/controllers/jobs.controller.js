@@ -434,3 +434,22 @@ export const guardarNota = async (req, res) => {
     res.status(500).json({ message: "Something goes wrong" });
   }
 };
+
+export const createTaller = async (req, res) => {
+  try {
+
+    const { idJob, cliente, equipo, averia, suceso } = req.body;
+
+    // Insertar el trabajo en la base de datos
+    const [jobResult] = await pool.query(
+      "INSERT INTO taller (idJob, cliente, equipo, averia, suceso) VALUES (?, ?, ?, ?, ?)",
+      [ idJob, cliente, equipo, averia, suceso ]
+    );
+
+    // Responder con el ID del trabajo del taller creado
+    res.status(201).json({ idJob: jobId });
+  } catch (error) {
+    console.error("Error al crear el trabajo del taller:", error);
+    res.status(500).json({ message: "Something goes wrong" });
+  }
+};
