@@ -483,3 +483,32 @@ export const getFinishedJobsByUser = async (req, res) => {
       return res.status(500).json({ message: "Something goes wrong" });
   }
 };
+
+
+
+const finishJob = async (req, res) => {
+  const { jobId } = req.params;
+  const { fecha_fin } = req.body; // Asumiendo que recibes la fecha de fin en el body
+
+  try {
+      // Obtener la información del trabajo (incluyendo fecha_inicio)
+      const [jobInfo] = await pool.query('SELECT fecha_inicio FROM users_jobs WHERE idJob = ?', [jobId]);
+      if (!jobInfo || jobInfo.length === 0) {
+          return res.status(404).json({ message: 'Trabajo no encontrado' });
+      }
+      const fechaInicio = new Date(jobInfo[0].fecha_inicio);
+      const fechaFinDate = new Date(fecha_fin);
+      const diferenciaEnMilisegundos = fechaFinDate.getTime() - fechaInicio.getTime();
+      const horasTrabajadas = diferenciaEnMilisegundos / (1000 * 60 * 60);
+
+      // Actualizar el estado del trabajo y guardar las horas trabajadas
+      await pool.query('UPDATE jobs SET state = "Terminado" WHERE idJob = ?', [jobId]);
+      await pool.query('UPDATE users_jobs SET fecha_fin = ?, horas_trabajadas = ? WHERE idJob = ?', [fecha_fin, horasTrabajadas, jobId]);
+
+      res.status(200).json({ message: 'Trabajo finalizado y horas trabajadas actualizadas' });
+
+  } catch (error) {
+      console.error('Error al finalizar el trabajo:', error);
+      res.status(500).json({ message: 'Error al finalizar el trabajo' });
+  }
+};
