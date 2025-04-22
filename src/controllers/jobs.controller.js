@@ -457,7 +457,6 @@ export const createTaller = async (req, res) => {
 
 // Nuevo controlador para obtener trabajos finalizados de un usuario
 export const getFinishedJobsByUser = async (req, res) => {
-  console.log("req.query:", req.query);
   try {
       const userId = parseInt(req.query.userId, 10); // Obtener userId como query parameter
       if (isNaN(userId)) {
@@ -465,11 +464,21 @@ export const getFinishedJobsByUser = async (req, res) => {
       }
 
       const [rows] = await pool.query(
-          `SELECT * FROM jobs INNER JOIN users_jobs ON jobs.idJob = users_jobs.idJob WHERE users_jobs.idUser = ? AND jobs.state = 'Terminado';`, // Ajusta 'Terminado' si tu estado es diferente
+          ` SELECT jobs.name, users.name, users_jobs.fecha_inicio, users_jobs.fecha_fin, users.precio AS precio_trabajo
+                  FROM jobs INNER JOIN users_jobs ON jobs.idJob = users_jobs.idJob INNER JOIN users ON users_jobs.idUser = users.idUser
+                            WHERE users_jobs.idUser = 9 AND jobs.state = 'Terminado';`,
           [userId]
       );
 
-      res.json(rows);
+      const facturas = rows.map(row => ({
+        name: row.name,
+        name: row.name,
+        fecha_inicio: row.fecha_inicio,
+        fecha_fin: row.fecha_fin,
+        precio: row.precio,
+    }));
+
+      res.json(facturas);
   } catch (error) {
       console.error("Error al obtener trabajos finalizados del usuario:", error);
       return res.status(500).json({ message: "Something goes wrong" });
