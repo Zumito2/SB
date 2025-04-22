@@ -458,7 +458,9 @@ export const createTaller = async (req, res) => {
 // Nuevo controlador para obtener trabajos finalizados de un usuario
 export const getFinishedJobsByUser = async (req, res) => {
   try {
-      const idUser = req.userId;
+
+    const { fecha_inicio, fecha_fin } = req.body;
+
       if (isNaN(idUser)) {
           return res.status(400).json({ message: "Invalid user ID" });
       }
@@ -466,8 +468,8 @@ export const getFinishedJobsByUser = async (req, res) => {
       const [rows] = await pool.query(
           ` SELECT jobs.name AS nameJob, users.name AS nameTecnico, users_jobs.fecha_inicio, users_jobs.fecha_fin, users.precio AS precio_trabajo
                   FROM jobs INNER JOIN users_jobs ON jobs.idJob = users_jobs.idJob INNER JOIN users ON users_jobs.idUser = users.idUser
-                            WHERE users_jobs.idUser = ? AND jobs.state = 'Terminado';`,
-          [idUser]
+                            WHERE jobs.state = 'Terminado' ADND jobs.fecha BETWEEN ? - ?;`,
+          [fecha_inicio, fecha_fin]
       );
 
       const facturas = rows.map(row => ({

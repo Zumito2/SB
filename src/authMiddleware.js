@@ -19,25 +19,6 @@ export const authenticateToken = (req, res, next) => {
     // Agregar los datos decodificados del usuario en la solicitud (req.user)
     req.user = decoded;
 
-
-
-
-
-
-    // Extraer el userId del payload del token y adjuntarlo a req
-    req.userId = decoded.userId; // Asegúrate de que la clave 'userId' coincida con la del payload del token
-
-    console.log("Middleware - Token decodificado:", decoded); // Log para verificar el payload
-    console.log("Middleware - userId extraído:", req.userId); // Log del userId extraído
-
-
-
-
-
-
-
-    
-
     next(); // Continuar con la siguiente función/middleware
   } catch (error) {
     // Si el token no es válido o ha expirado, responde con error 403
