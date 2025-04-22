@@ -453,3 +453,24 @@ export const createTaller = async (req, res) => {
     res.status(500).json({ message: "Something goes wrong" });
   }
 };
+
+
+// Nuevo controlador para obtener trabajos finalizados de un usuario
+export const getFinishedJobsByUser = async (req, res) => {
+  try {
+      const userId = parseInt(req.query.userId, 10); // Obtener userId como query parameter
+      if (isNaN(userId)) {
+          return res.status(400).json({ message: "Invalid user ID" });
+      }
+
+      const [rows] = await pool.query(
+          `SELECT * FROM jobs INNER JOIN users_jobs ON jobs.idJob = users_jobs.idJob WHERE users_jobs.idUser = ? AND jobs.state = 'Terminado';`, // Ajusta 'Terminado' si tu estado es diferente
+          [userId]
+      );
+
+      res.json(rows);
+  } catch (error) {
+      console.error("Error al obtener trabajos finalizados del usuario:", error);
+      return res.status(500).json({ message: "Something goes wrong" });
+  }
+};
