@@ -464,15 +464,15 @@ export const getFinishedJobsByUser = async (req, res) => {
       }
 
       const [rows] = await pool.query(
-          ` SELECT jobs.name, users.name, users_jobs.fecha_inicio, users_jobs.fecha_fin, users.precio AS precio_trabajo
+          ` SELECT jobs.name AS nameJob, users.name AS nameTecnico, users_jobs.fecha_inicio, users_jobs.fecha_fin, users.precio AS precio_trabajo
                   FROM jobs INNER JOIN users_jobs ON jobs.idJob = users_jobs.idJob INNER JOIN users ON users_jobs.idUser = users.idUser
-                            WHERE users_jobs.idUser = 9 AND jobs.state = 'Terminado';`,
+                            WHERE users_jobs.idUser = ? AND jobs.state = 'Terminado';`,
           [idUser]
       );
 
       const facturas = rows.map(row => ({
-        name: row.name,
-        name: row.name,
+        nameJob: row.nameJob,
+        nameTecnico: row.nameTecnico,
         fecha_inicio: row.fecha_inicio,
         fecha_fin: row.fecha_fin,
         precio: row.precio,
