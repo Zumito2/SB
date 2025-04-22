@@ -459,11 +459,8 @@ export const createTaller = async (req, res) => {
 export const getFinishedJobsByUser = async (req, res) => {
   try {
 
-    const { fecha_inicio, fecha_fin } = req.body;
-
-      if (isNaN(idUser)) {
-          return res.status(400).json({ message: "Invalid user ID" });
-      }
+    const { fecha_inicio } = req.params
+    const { fecha_fin } = req.params
 
       const [rows] = await pool.query(
           ` SELECT jobs.name AS nameJob, users.name AS nameTecnico, users_jobs.fecha_inicio, users_jobs.fecha_fin, users.precio AS precio_trabajo

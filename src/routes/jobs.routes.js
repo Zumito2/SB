@@ -44,7 +44,7 @@ router.put('/notas/:idJob', authenticateToken, guardarNota);
 
 router.post('/createTaller', authenticateToken, createTaller);
 
-router.get('/finalizados', authenticateToken, getFinishedJobsByUser)
+router.get('/finalizados/:fecha_inicio/:fecha_fin', authenticateToken, getFinishedJobsByUser)
 
 // Exporta el objeto `router` para que pueda ser utilizado en otros archivos de la aplicación.
 export default router;
