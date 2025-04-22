@@ -458,8 +458,8 @@ export const createTaller = async (req, res) => {
 // Nuevo controlador para obtener trabajos finalizados de un usuario
 export const getFinishedJobsByUser = async (req, res) => {
   try {
-      const userId = parseInt(req.query.userId, 10); // Obtener userId como query parameter
-      if (isNaN(userId)) {
+      const idUser = parseInt(req.query.idUser, 10); // Obtener userId como query parameter
+      if (isNaN(idUser)) {
           return res.status(400).json({ message: "Invalid user ID" });
       }
 
@@ -467,7 +467,7 @@ export const getFinishedJobsByUser = async (req, res) => {
           ` SELECT jobs.name, users.name, users_jobs.fecha_inicio, users_jobs.fecha_fin, users.precio AS precio_trabajo
                   FROM jobs INNER JOIN users_jobs ON jobs.idJob = users_jobs.idJob INNER JOIN users ON users_jobs.idUser = users.idUser
                             WHERE users_jobs.idUser = 9 AND jobs.state = 'Terminado';`,
-          [userId]
+          [idUser]
       );
 
       const facturas = rows.map(row => ({
