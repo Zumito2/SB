@@ -457,6 +457,7 @@ export const createTaller = async (req, res) => {
 
 // Nuevo controlador para obtener trabajos finalizados de un usuario
 export const getFinishedJobsByUser = async (req, res) => {
+  console.log("req.query:", req.query);
   try {
       const userId = parseInt(req.query.userId, 10); // Obtener userId como query parameter
       if (isNaN(userId)) {
