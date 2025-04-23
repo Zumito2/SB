@@ -463,8 +463,7 @@ export const getFinishedJobsByUser = async (req, res) => {
     const { fecha_fin } = req.params
 
       const [rows] = await pool.query(
-          ` SELECT jobs.name AS nameJob, users.name AS nameTecnico, users_jobs.fecha_inicio, users_jobs.fecha_fin, users.precio AS precioPorHora,
-            users_jobs.horas_trabajadas, users_jobs.precio_total, jobs.idJob
+          ` SELECT jobs.name AS nameJob, users.name AS nameTecnico, users_jobs.fecha_inicio, users_jobs.fecha_fin, users.precio AS precioPorHora, jobs.idJob
                   FROM jobs INNER JOIN users_jobs ON jobs.idJob = users_jobs.idJob INNER JOIN users ON users_jobs.idUser = users.idUser
                             WHERE jobs.state = 'Terminado' AND jobs.dateJob BETWEEN ? AND ?;`,
           [fecha_inicio, fecha_fin]
@@ -476,8 +475,6 @@ export const getFinishedJobsByUser = async (req, res) => {
         fecha_inicio: row.fecha_inicio,
         fecha_fin: row.fecha_fin,
         precio: row.precio_trabajo,
-        horas_trabajadas: row.horas_trabajadas,
-        precioTotal: row.precio_total,
         idJob: row.idJob
     }));
 
