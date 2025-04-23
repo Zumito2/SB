@@ -302,7 +302,6 @@ export const updateJob = async (req, res) => {
   }
 };
 
-
 // **Eliminar un trabajo existente**
 export const deleteJob = async (req, res) => {
   try {
