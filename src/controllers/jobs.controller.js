@@ -474,7 +474,7 @@ export const getFinishedJobsByUser = async (req, res) => {
         nameTecnico: row.nameTecnico,
         fecha_inicio: row.fecha_inicio,
         fecha_fin: row.fecha_fin,
-        precio: row.precio_trabajo,
+        precio: row.precioPorHora,
         idJob: row.idJob
     }));
 
