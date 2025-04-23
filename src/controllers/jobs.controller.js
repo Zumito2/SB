@@ -362,8 +362,8 @@ export const createUserJob = async (req, res) => {
 
     // 3️⃣ Insertar en users_jobs
     await pool.query(
-      'INSERT INTO users_jobs (idUser, idJob) VALUES (?, ?)',
-      [idUser, idJob]
+      'INSERT INTO users_jobs (idUser, idJob, fecha_inicio, fecha_fin) VALUES (?, ?, ?, ?)',
+      [idUser, idJob, fecha_inicio, fecha_fin]
     );
 
     // 4️⃣ Responder con éxito
