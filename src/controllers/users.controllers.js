@@ -121,11 +121,11 @@ export const updateUser = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    const { name, pass, rol, tlf, email, precio } = req.body;
+    const { name, pass, rol, tlf, email } = req.body;
 
     const [result] = await pool.query(
-      "UPDATE users SET name = IFNULL(?, name), pass = IFNULL(?, pass), rol = IFNULL(?, rol),  tlf = IFNULL(?, tlf),  email = IFNULL(?, precio), precio = IFNULL(?, email) WHERE idUser = ?",
-      [name, pass, rol, tlf, email, precio, idUser]
+      "UPDATE users SET name = IFNULL(?, name), pass = IFNULL(?, pass), rol = IFNULL(?, rol),  tlf = IFNULL(?, tlf),  email = IFNULL(?, email)WHERE idUser = ?",
+      [name, pass, rol, tlf, email, idUser]
     );
 
     if (result.affectedRows === 0) {
