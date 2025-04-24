@@ -302,7 +302,6 @@ export const updateJob = async (req, res) => {
   }
 };
 
-
 // **Eliminar un trabajo existente**
 export const deleteJob = async (req, res) => {
   try {
@@ -463,8 +462,7 @@ export const getFinishedJobsByUser = async (req, res) => {
     const { fecha_fin } = req.params
 
       const [rows] = await pool.query(
-          ` SELECT jobs.name AS nameJob, users.name AS nameTecnico, users_jobs.fecha_inicio, users_jobs.fecha_fin, users.precio AS precioPorHora,
-            users_jobs.horas_trabajadas, users_jobs.precio_total
+          ` SELECT jobs.name AS nameJob, users.name AS nameTecnico, users_jobs.fecha_inicio, users_jobs.fecha_fin, users.precio AS precioPorHora, jobs.idJob
                   FROM jobs INNER JOIN users_jobs ON jobs.idJob = users_jobs.idJob INNER JOIN users ON users_jobs.idUser = users.idUser
                             WHERE jobs.state = 'Terminado' AND jobs.dateJob BETWEEN ? AND ?;`,
           [fecha_inicio, fecha_fin]
@@ -475,9 +473,7 @@ export const getFinishedJobsByUser = async (req, res) => {
         nameTecnico: row.nameTecnico,
         fecha_inicio: row.fecha_inicio,
         fecha_fin: row.fecha_fin,
-        precio: row.precio_trabajo,
-        horas_trabajadas: row.horas_trabajadas,
-        precioTotal: row.precio_total,
+        precio: row.precioPorHora,
         idJob: row.idJob
     }));
 
@@ -490,61 +486,4 @@ export const getFinishedJobsByUser = async (req, res) => {
 
 
 
-
-
-export const endJobHorasTrabajadas = async (req, res) => {
-  try {
-    const { idJob } = req.params; // Obtener idJob de la URL
-    const { dateJob } = req.body; // Obtener fecha de fin
-
-    if (!idJob || !dateJob) {
-      return res.status(400).json({ message: "Faltan parámetros: idJob o endTime" });
-    }
-
-    // 1️⃣ Obtener la fecha de inicio del trabajo desde users_jobs
-    const [startRows] = await pool.query(
-      'SELECT fecha_inicio FROM users_jobs WHERE idJob = ?',
-      [idJob]
-    );
-
-    if (startRows.length === 0 || !startRows[0].fecha_inicio) {
-      return res.status(404).json({ message: "No se encontró la fecha de inicio para este trabajo" });
-    }
-
-    const fecha_inicio = moment(startRows[0].fecha_inicio);
-    const fecha_fin = moment(dateJob);
-
-    // 2️⃣ Calcular la diferencia en horas
-    const diferenciaEnMillis = fecha_fin.diff(fecha_inicio);
-    const horasTrabajadas = moment.duration(diferenciaEnMillis).asHours();
-
-    // 3️⃣ Actualizar la fecha de fin y las horas trabajadas en users_jobs
-    const [result] = await pool.query(
-      'UPDATE users_jobs SET fecha_fin = ?, horas_trabajadas = ? WHERE idJob = ?',
-      [dateJob, horasTrabajadas, idJob]
-    );
-
-    if (result.affectedRows === 0) {
-      return res.status(404).json({ message: "Trabajo no encontrado" });
-    }
-
-    // 4️⃣ Actualizar estado en jobs
-    const newStatus = "Terminado";
-    const [statusUpdate] = await pool.query(
-      'UPDATE jobs SET state = ? WHERE idJob = ?',
-      [newStatus, idJob]
-    );
-
-    if (statusUpdate.affectedRows === 0) {
-      return res.status(404).json({ message: "No se pudo actualizar el estado del trabajo" });
-    }
-
-    // 5️⃣ Enviar respuesta después de que todo se complete
-    res.status(200).json({ message: "Hora de fin y estado actualizados correctamente, horas trabajadas guardadas" });
-
-  } catch (error) {
-    console.error("Error al finalizar el trabajo:", error);
-    res.status(500).json({ message: "Something goes wrong" });
-  }
-};
 
