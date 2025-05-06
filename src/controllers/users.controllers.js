@@ -1,121 +1,114 @@
-// Importa el objeto `pool` desde el archivo de configuración de base de datos (`db.js`).
-// `pool` gestiona las conexiones a la base de datos.
-import { pool } from '../db.js';
-import jwt from 'jsonwebtoken';
-import dotenv from 'dotenv';
+// Importación de dependencias necesarias
+import { pool } from '../db.js'; // Manejador de conexiones MySQL
+import jwt from 'jsonwebtoken'; // Para autenticación con tokens (no usado aquí, pero importado)
+import dotenv from 'dotenv'; // Para usar variables de entorno
 dotenv.config();
 
-// **Obtener lista total de usuarios**
-// Este controlador maneja la solicitud para obtener todos los usuarios de la base de datos.
+// ================================
+// Obtener todos los usuarios
+// ================================
 export const getUsers = async (req, res) => {
   try {
-    // Realiza una consulta SQL para obtener todos los usuarios.
     const [rows] = await pool.query("SELECT u.idUser, u.name, u.rol, u.tlf, u.email, u.precio FROM users u");
-
-    // Responde con la lista de usuarios en formato JSON.
     res.json(rows);
   } catch (error) {
-    // Si ocurre un error en la consulta, se captura y se responde con un error 500 (Internal Server Error).
     console.error("Error al ejecutar la consulta:", error); 
     return res.status(500).json({ message: "Something goes wrong" });
   }
 };
 
-// **Buscar usuario por ID**
-// Este controlador maneja la solicitud para obtener un usuario por su ID.
+// ================================
+// Obtener un usuario por ID
+// ================================
 export const getUser = async (req, res) => {
   try {
-    // Realiza una consulta SQL para obtener un usuario por su ID. `req.params.id` obtiene el ID desde los parámetros de la URL.
-    const [rows] = await pool.query('SELECT u.idUser, u.name, u.rol, u.tlf, u.email, u.precio FROM users u WHERE idUser = ?', [req.params.id]);
+    const [rows] = await pool.query(
+      'SELECT u.idUser, u.name, u.rol, u.tlf, u.email, u.precio FROM users u WHERE idUser = ?', 
+      [req.params.id]
+    );
 
-    // Si no se encuentra ningún usuario con el ID especificado, se responde con un error 404 (Not Found).
     if (rows.length <= 0) {
       return res.status(404).json({ message: "Usuario no encontrado" });
     }
 
-    // Si el usuario existe, se responde con el usuario encontrado en formato JSON.
     res.json(rows[0]);
   } catch (error) {
-    // En caso de un error, se responde con un error 500 (Internal Server Error).
     return res.status(500).json({ message: "Something goes wrong" });
   }
 };
 
-// **Crear un nuevo usuario**
-// Este controlador maneja la solicitud para crear un nuevo usuario.
+// ================================
+// Crear un nuevo usuario
+// ================================
 export const createUser = async (req, res) => {
   try {
-    const { userId } = req.params;
-    // Extrae los datos del nuevo usuario desde el cuerpo de la solicitud (name, pass, rol).
+    const { userId } = req.params; // ID del usuario que realiza la acción (para registros)
     const { name, pass, email, tlf, precio, rol } = req.body;
 
-    // Realiza una consulta SQL para insertar un nuevo usuario en la base de datos.
+    // Inserta el nuevo usuario en la tabla users
     const [rows] = await pool.query(
       "INSERT INTO users (name, pass, email, tlf, precio, rol) VALUES (?, ?, ?, ?, ?, ?)",
-      [name, pass, email, tlf, precio, rol ]
+      [name, pass, email, tlf, precio, rol]
     );
 
     const idUser = rows.insertId;
 
+    // Inserta una ubicación vacía inicial para el nuevo usuario
     await pool.query(
       "INSERT INTO location (idUser, name, latitud, longitud, fecha) VALUES (?, ?, ?, ?, NOW())",
       [idUser, name, "", ""]
     );
 
-    // Insertar un registro en la tabla de registros
+    // Registra en la tabla de auditoría que se creó un nuevo usuario
     await pool.query(
-    "INSERT INTO registros (idUser, comentario, hora) VALUES (?, ?, NOW())",
-    [userId, `Usuario creado ${name}`]
+      "INSERT INTO registros (idUser, comentario, hora) VALUES (?, ?, NOW())",
+      [userId, `Usuario creado ${name}`]
     );
 
-    // Responde con el ID del nuevo usuario junto con su nombre, contraseña y rol.
-    res.status(201).json({ id: rows.insertId, name, rol, tlf, email, precio });
+    res.status(201).json({ id: idUser, name, rol, tlf, email, precio });
   } catch (error) {
-    // Si ocurre un error en la consulta, se responde con un error 500 (Internal Server Error).
     return res.status(500).json({ message: "Something goes wrong" });
   }
-
 };
 
-// **Eliminar un usuario**
-// Este controlador maneja la solicitud para eliminar un usuario por su ID.
+// ================================
+// Eliminar un usuario
+// ================================
 export const deleteUser = async (req, res) => {
   try {
-    // Extrae el ID del usuario a eliminar desde los parámetros de la solicitud.
-    const { idUser } = req.params;
-    const { userId } = req.params;
+    const { idUser, userId } = req.params;
 
-    // Realiza una consulta SQL para eliminar un usuario de la base de datos utilizando su ID.
+    // Elimina el usuario de la base de datos
     const [result] = await pool.query("DELETE FROM users WHERE idUser = ?", [Number(idUser)]);
 
-    // Si no se eliminó ningún registro, responde con un error 404 (Not Found).
     if (result.affectedRows <= 0) {
       return res.status(404).json({ message: "Usuario no encontrado" });
     }
 
+    // Elimina también la ubicación asociada
     await pool.query("DELETE FROM location WHERE idUser = ?", [Number(idUser)]);
 
-    // Insertar un registro en la tabla de registros
+    // Registra la eliminación en la tabla de auditoría
     await pool.query(
       "INSERT INTO registros (idUser, comentario, hora) VALUES (?, ?, NOW())",
       [userId, `Usuario eliminado ${idUser}`]
-      );
+    );
 
-    // Responde con un estado 204 (No Content) si la eliminación fue exitosa.
     res.sendStatus(204);
   } catch (error) {
-    // Si ocurre un error durante la eliminación, se responde con un error 500 (Internal Server Error).
     console.error("Error al eliminar usuario:", error);
     return res.status(500).json({ message: "Something goes wrong" });
   }
-
 };
 
+// ================================
+// Actualizar datos de un usuario
+// ================================
 export const updateUser = async (req, res) => {
   try {
     const { idUser } = req.params;
-    
-    // Verificar si el usuario existe antes de actualizar
+
+    // Verificar existencia del usuario
     const [existingUser] = await pool.query("SELECT * FROM users WHERE idUser = ?", [idUser]);
     if (existingUser.length === 0) {
       return res.status(404).json({ message: "User not found" });
@@ -123,8 +116,9 @@ export const updateUser = async (req, res) => {
 
     const { name, pass, rol, tlf, email } = req.body;
 
+    // Actualiza el usuario, solo los campos que se envían
     const [result] = await pool.query(
-      "UPDATE users SET name = IFNULL(?, name), pass = IFNULL(?, pass), rol = IFNULL(?, rol),  tlf = IFNULL(?, tlf),  email = IFNULL(?, email)WHERE idUser = ?",
+      "UPDATE users SET name = IFNULL(?, name), pass = IFNULL(?, pass), rol = IFNULL(?, rol),  tlf = IFNULL(?, tlf),  email = IFNULL(?, email) WHERE idUser = ?",
       [name, pass, rol, tlf, email, idUser]
     );
 
@@ -132,10 +126,10 @@ export const updateUser = async (req, res) => {
       return res.status(400).json({ message: "No changes made" });
     }
 
-    // Obtener el usuario actualizado
+    // Obtiene los datos actualizados
     const [rows] = await pool.query("SELECT * FROM users WHERE idUser = ?", [idUser]);
 
-    // Insertar registro en logs
+    // Registra el cambio en la tabla de auditoría
     await pool.query(
       "INSERT INTO registros (idUser, comentario, hora) VALUES (?, ?, NOW())",
       [idUser, `Usuario modificado ${name || existingUser[0].name}`]
@@ -148,65 +142,62 @@ export const updateUser = async (req, res) => {
   }
 };
 
-
+// ================================
+// Obtener usuarios asignados a un trabajo
+// ================================
 export const getUsersByJob = async (req, res) => {
   try {
-    console.log("Iniciando getUsersByJob")
     const { idJob } = req.params;
-    // Realiza una consulta SQL para obtener todos los usuarios.
-    const [rows] = await pool.query("SELECT u.idUser, u.name, u.rol, u.tlf, u.email, u.precio FROM users u JOIN users_jobs j ON u.idUser = j.idUser WHERE j.idJob = ?", [idJob]);
 
-    // Responde con la lista de usuarios en formato JSON.
+    const [rows] = await pool.query(
+      "SELECT u.idUser, u.name, u.rol, u.tlf, u.email, u.precio FROM users u JOIN users_jobs j ON u.idUser = j.idUser WHERE j.idJob = ?", 
+      [idJob]
+    );
+
     res.json(rows);
-    console.log(rows);
   } catch (error) {
-    // Si ocurre un error en la consulta, se captura y se responde con un error 500 (Internal Server Error).
     console.error("Error al ejecutar la consulta:", error); 
     return res.status(500).json({ message: "Something goes wrong" });
   }
 };
 
-// **Buscar usuario por ID**
-// Este controlador maneja la solicitud para obtener un usuario por su ID.
+// ================================
+// Obtener teléfono del soporte (usuario ID 999)
+// ================================
 export const getHelp = async (req, res) => {
   try {
-    // Realiza una consulta SQL para obtener un usuario por su ID.
     const [rows] = await pool.query('SELECT tlf FROM users WHERE idUser = 999');
 
-    // Si no se encuentra ningún usuario con el ID especificado, se responde con un error 404 (Not Found).
     if (rows.length <= 0) {
       return res.status(404).json({ message: "Usuario no encontrado" });
     }
 
-    // Si el usuario existe, se responde con el usuario encontrado en formato JSON.
     res.json(rows[0]);
   } catch (error) {
-    // En caso de un error, se responde con un error 500 (Internal Server Error).
     return res.status(500).json({ message: "Something goes wrong" });
   }
 };
 
+// ================================
+// Actualizar ubicación del usuario
+// ================================
 export const setLocation = async (req, res) => {
   try {
     const { idUser, latitud, longitud, fecha } = req.body;
 
-    // Validar los parámetros necesarios
     if (!idUser || !latitud || !longitud || !fecha) {
       return res.status(400).json({ error: "Faltan datos necesarios" });
     }
 
-    // SQL para actualizar la ubicación
     const [result] = await pool.query(
       "UPDATE location SET latitud = ?, longitud = ?, fecha = NOW() WHERE idUser = ?",
       [latitud, longitud, idUser]
     );
 
-    // Verificar si el usuario fue encontrado y actualizado
     if (result.affectedRows === 0) {
       return res.status(404).json({ message: "Usuario no encontrado" });
     }
 
-    // Respuesta en caso de éxito
     res.json({ message: "Ubicación actualizada correctamente" });
   } catch (error) {
     console.error(error);
@@ -214,15 +205,14 @@ export const setLocation = async (req, res) => {
   }
 };
 
+// ================================
+// Obtener todas las ubicaciones recientes
+// ================================
 export const getRecentlyLocation = async (req, res) => {
   try {
-    // Realiza una consulta SQL para obtener todas las ubicaciones.
     const [rows] = await pool.query("SELECT * FROM location");
-
-    // Responde con la lista de ubicaciones en formato JSON.
     res.json(rows);
   } catch (error) {
-    // Si ocurre un error en la consulta, se captura y se responde con un error 500 (Internal Server Error).
     console.error("Error al ejecutar la consulta:", error); 
     return res.status(500).json({ message: "Something goes wrong" });
   }
